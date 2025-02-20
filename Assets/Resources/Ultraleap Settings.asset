@@ -15,8 +15,11 @@ MonoBehaviour:
   leapSubsystemEnabled: 0
   updateLeapInputSystem: 0
   updateMetaInputSystem: 0
-  startupHints: []
+  startupHints:
+  - microgestures
+  - high_hand_fidelity
+  - high_background_illumination
   showAndroidBuildArchitectureWarning: 1
   showPhysicalHandsPhysicsSettingsWarning: 1
-  pluginVersion: Unknown
-  pluginSource: Unknown
+  pluginVersion: 6.15.0
+  pluginSource: UPM OpenUPM

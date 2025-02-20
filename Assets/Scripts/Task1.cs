@@ -55,7 +55,7 @@ public class Task1 : MonoBehaviour
     //task list
     private bool task1Flag, task2Flag, task3Flag, task4Flag, task5Flag, task6Flag, task7Flag = false;
     private string taskText;
-    private string[] taskNames = {"Finger Extension","MCP Flexion","PIP/DIP Extension", "Thumb Out", "Thumb Last" , "Wrist Flexion/Extension"};
+    private string[] taskNames = {"Finger Extension","MCP Flexion","PIP/DIP Extension", "Thumb Out", "Thumb In" , "Wrist Flexion/Extension"};
     private string lineText;
 
     //Data saving
@@ -151,8 +151,8 @@ public class Task1 : MonoBehaviour
         else if (scene == 6)
         {
             task5Flag = true;
-            taskText = "<b>Thumb Last</b>";
-            title.text = "Thumb Last";
+            taskText = "<b>Thumb In</b>";
+            title.text = "Thumb In";
             InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1;
             path_leapRight = Application.dataPath + "/rightHand7.txt";
             rawLeapRight = File.CreateText(path_leapRight);
@@ -493,6 +493,11 @@ public class Task1 : MonoBehaviour
                 NextTaskOnClick();
             }
         }
-            
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+
     }
 }

@@ -75,6 +75,11 @@ public class LogIn : MonoBehaviour
     void Update()
     {
         CheckConditions();
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 
     private bool IsValidDate(string input)

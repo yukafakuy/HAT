@@ -144,9 +144,16 @@ public class VisualizeResults : MonoBehaviour
         try
         {
             string[] lines = File.ReadAllLines(filePath);
+            bool firstLine = true;
 
             foreach (string line in lines)
             {
+                if (firstLine)
+                {
+                    firstLine = false;
+                    continue;
+                }
+
                 string[] tokens = line.Split(new[] { ' ', '\t' });
 
                 dates.Add(tokens[0]);
@@ -1448,6 +1455,11 @@ public class VisualizeResults : MonoBehaviour
     {
         //UnityEngine.Debug.Log(DateTo);
         changeDateRange();
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 
 }

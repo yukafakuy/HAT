@@ -135,5 +135,10 @@ public class SelectTasks : MonoBehaviour
     void Update()
     {
         CountTasks();
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 }
