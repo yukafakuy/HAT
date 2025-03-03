@@ -48,7 +48,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Thumb Out.unity
     guid: b3e10cd5361304d8ebe5a314340ceecc
   - enabled: 1
-    path: Assets/Scenes/Thumb Last.unity
+    path: Assets/Scenes/Thumb In.unity
     guid: bc224ed3598194280b9e4d6a1658d49d
   - enabled: 1
     path: Assets/Scenes/Wrist Flexion Extension.unity
@@ -57,7 +57,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Result.unity
     guid: e1570592e148f45d1a0e291653ad0f2d
   - enabled: 0
-    path: Assets/Scenes/Thumb In.unity
+    path: Assets/Scenes/Thumb to index.unity
     guid: 8cc7380155e33458cab2c3f52ce18b58
   - enabled: 0
     path: Assets/Scenes/Thumb Front.unity
