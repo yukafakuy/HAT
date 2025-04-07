@@ -21,6 +21,15 @@
       },
       "hash": "dd99ee4699bfde56dfb6155bf36b0d3a5135bf8c"
     },
+    "com.github.homuler.mediapipe": {
+      "version": "file:com.github.homuler.mediapipe",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.ugui": "1.0.0",
+        "com.unity.test-framework": "1.0.0"
+      }
+    },
     "com.simonoliver.unityfigma": {
       "version": "https://github.com/simonoliver/UnityFigmaBridge.git",
       "depth": 0,
