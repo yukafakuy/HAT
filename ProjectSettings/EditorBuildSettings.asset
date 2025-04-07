@@ -33,7 +33,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Log-in.unity
     guid: 43318da7a9cde44b38e0608c86607ee6
   - enabled: 1
-    path: Assets/Scenes/Select Task 2.0.unity
+    path: Assets/Scenes/Set Up.unity
     guid: ef7f5ceb41a024bbe8a9c957001a766a
   - enabled: 1
     path: Assets/Scenes/Finger Extension.unity
