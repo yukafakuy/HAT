@@ -350,10 +350,10 @@ public class Task1 : MonoBehaviour
     {
         if (rightHand != null)
         {
+
+            // Regular way of extracting data from the virtual hand
+
             //thumb
-            float CMC_x = getAnglesX(RthumbCMC);
-            float CMC_y = getAnglesY(RthumbCMC);
-            float CMC_z = getAnglesZ(RthumbCMC);
             float thumb_MCP = getAnglesZ(RthumbMCP);
             float thumb_IP = getAnglesZ(RthumbIP);
 
@@ -383,7 +383,7 @@ public class Task1 : MonoBehaviour
             //Vector3 palm_direction = rightHand.Direction;
             //float wrist_flex = (float)(Math.Atan2(palm_direction.x, palm_direction.z) * 180 / Math.PI);
 
-            rawDataRight = CMC_x + "\t" + CMC_y + "\t" + CMC_z + "\t" + thumb_MCP + "\t" + thumb_IP + "\t" +
+            rawDataRight = thumb_MCP + "\t" + thumb_IP + "\t" +
                 index_MCP + "\t" + index_PIP + "\t" + index_DIP + "\t" +
                 middle_MCP + "\t" + middle_PIP + "\t" + middle_DIP + "\t" +
                 ring_MCP + "\t" + ring_PIP + "\t" + ring_DIP + "\t" +

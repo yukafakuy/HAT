@@ -292,50 +292,6 @@ public class VisualizeResults : MonoBehaviour
         series4.dataY.AddRange(thumbIPmin);
         series4.dateTimeString.AddRange(dates);
 
-        /*
-        //Thumb CMCx
-        series5.name = "Max";
-        series5.dataY = new List<float>();
-        series5.dateTimeString = new List<string>();
-        series5.dateTimeTick = new List<long>();
-        series5.dataY.AddRange(thumbCMCxmax);
-        series5.dateTimeString.AddRange(dates);
-        series6.name = "Min";
-        series6.dataY = new List<float>();
-        series6.dateTimeString = new List<string>();
-        series6.dateTimeTick = new List<long>();
-        series6.dataY.AddRange(thumbCMCxmin);
-        series6.dateTimeString.AddRange(dates);
-
-        //Thumb CMCy
-        series7.name = "Max";
-        series7.dataY = new List<float>();
-        series7.dateTimeString = new List<string>();
-        series7.dateTimeTick = new List<long>();
-        series7.dataY.AddRange(thumbCMCymax);
-        series7.dateTimeString.AddRange(dates);
-        series8.name = "Min";
-        series8.dataY = new List<float>();
-        series8.dateTimeString = new List<string>();
-        series8.dateTimeTick = new List<long>();
-        series8.dataY.AddRange(thumbCMCymin);
-        series8.dateTimeString.AddRange(dates);
-
-        //Thumb CMCz
-        series9.name = "Max";
-        series9.dataY = new List<float>();
-        series9.dateTimeString = new List<string>();
-        series9.dateTimeTick = new List<long>();
-        series9.dataY.AddRange(thumbCMCzmax);
-        series9.dateTimeString.AddRange(dates);
-        series10.name = "Min";
-        series10.dataY = new List<float>();
-        series10.dateTimeString = new List<string>();
-        series10.dateTimeTick = new List<long>();
-        series10.dataY.AddRange(thumbCMCzmin);
-        series10.dateTimeString.AddRange(dates);
-        */
-
         //Index MCP
         series11.name = "Extension";
         series11.dataY = new List<float>();
@@ -640,43 +596,43 @@ public class VisualizeResults : MonoBehaviour
                 if (i == 1)
                 {
                     //extract data
-                    float maxValue = columnArrays[5].Max();
+                    float maxValue = columnArrays[2].Max();
                     maxValue = MathF.Round(maxValue);
                     dataExtracted[11] = maxValue.ToString();
-                    maxValue = columnArrays[6].Max();
+                    maxValue = columnArrays[3].Max();
                     maxValue = MathF.Round(maxValue);
                     dataExtracted[13] = maxValue.ToString();
-                    maxValue = columnArrays[7].Max();
+                    maxValue = columnArrays[4].Max();
                     maxValue = MathF.Round(maxValue);
                     dataExtracted[15] = maxValue.ToString();
 
-                    maxValue = columnArrays[8].Max();
+                    maxValue = columnArrays[5].Max();
                     maxValue = MathF.Round(maxValue);
                     dataExtracted[17] = maxValue.ToString();
-                    maxValue = columnArrays[9].Max();
+                    maxValue = columnArrays[6].Max();
                     maxValue = MathF.Round(maxValue);
                     dataExtracted[19] = maxValue.ToString();
-                    maxValue = columnArrays[10].Max();
+                    maxValue = columnArrays[7].Max();
                     maxValue = MathF.Round(maxValue);
                     dataExtracted[21] = maxValue.ToString();
 
-                    maxValue = columnArrays[11].Max();
+                    maxValue = columnArrays[8].Max();
                     maxValue = MathF.Round(maxValue);
                     dataExtracted[23] = maxValue.ToString();
-                    maxValue = columnArrays[12].Max();
+                    maxValue = columnArrays[9].Max();
                     maxValue = MathF.Round(maxValue);
                     dataExtracted[25] = maxValue.ToString();
-                    maxValue = columnArrays[13].Max();
+                    maxValue = columnArrays[10].Max();
                     maxValue = MathF.Round(maxValue);
                     dataExtracted[27] = maxValue.ToString();
 
-                    maxValue = columnArrays[14].Max();
+                    maxValue = columnArrays[11].Max();
                     maxValue = MathF.Round(maxValue);
                     dataExtracted[29] = maxValue.ToString();
-                    maxValue = columnArrays[15].Max();
+                    maxValue = columnArrays[12].Max();
                     maxValue = MathF.Round(maxValue);
                     dataExtracted[31] = maxValue.ToString();
-                    maxValue = columnArrays[16].Max();
+                    maxValue = columnArrays[13].Max();
                     maxValue = MathF.Round(maxValue);
                     dataExtracted[33] = maxValue.ToString();
 
@@ -685,47 +641,47 @@ public class VisualizeResults : MonoBehaviour
 
                 else if (i == 2)
                 {
-                    float minValue = columnArrays[5].Min();
+                    float minValue = columnArrays[2].Min();
                     minValue = MathF.Round(minValue);
                     dataExtracted[12] = minValue.ToString();
 
-                    minValue = columnArrays[8].Min();
+                    minValue = columnArrays[5].Min();
                     minValue = MathF.Round(minValue);
                     dataExtracted[18] = minValue.ToString();
 
-                    minValue = columnArrays[11].Min();
+                    minValue = columnArrays[8].Min();
                     minValue = MathF.Round(minValue);
                     dataExtracted[24] = minValue.ToString();
 
-                    minValue = columnArrays[14].Min();
+                    minValue = columnArrays[11].Min();
                     minValue = MathF.Round(minValue);
                     dataExtracted[30] = minValue.ToString();
 
-                    minValue = columnArrays[6].Min();
+                    minValue = columnArrays[3].Min();
                     minValue = MathF.Round(minValue);
                     dataExtracted[14] = minValue.ToString();
-                    minValue = columnArrays[7].Min();
+                    minValue = columnArrays[4].Min();
                     minValue = MathF.Round(minValue);
                     dataExtracted[16] = minValue.ToString();
 
-                    minValue = columnArrays[9].Min();
+                    minValue = columnArrays[6].Min();
                     minValue = MathF.Round(minValue);
                     dataExtracted[20] = minValue.ToString();
-                    minValue = columnArrays[10].Min();
+                    minValue = columnArrays[7].Min();
                     minValue = MathF.Round(minValue);
                     dataExtracted[22] = minValue.ToString();
 
-                    minValue = columnArrays[12].Min();
+                    minValue = columnArrays[9].Min();
                     minValue = MathF.Round(minValue);
                     dataExtracted[26] = minValue.ToString();
-                    minValue = columnArrays[13].Min();
+                    minValue = columnArrays[10].Min();
                     minValue = MathF.Round(minValue);
                     dataExtracted[28] = minValue.ToString();
 
-                    minValue = columnArrays[15].Min();
+                    minValue = columnArrays[12].Min();
                     minValue = MathF.Round(minValue);
                     dataExtracted[32] = minValue.ToString();
-                    minValue = columnArrays[16].Min();
+                    minValue = columnArrays[13].Min();
                     minValue = MathF.Round(minValue);
                     dataExtracted[34] = minValue.ToString();
 
@@ -790,11 +746,11 @@ public class VisualizeResults : MonoBehaviour
                     //minValue = MathF.Round(minValue);
                     //dataExtracted[8] = minValue.ToString();
 
-                    float maxValue = columnArrays[3].Max();
+                    float maxValue = columnArrays[0].Max();
                     maxValue = MathF.Round(maxValue);
                     dataExtracted[1] = maxValue.ToString();
 
-                    maxValue = columnArrays[4].Max();
+                    maxValue = columnArrays[1].Max();
                     maxValue = MathF.Round(maxValue);
                     dataExtracted[3] = maxValue.ToString();
 
@@ -817,10 +773,10 @@ public class VisualizeResults : MonoBehaviour
 
                 else if (i == 7)
                 {
-                    float minValue = columnArrays[3].Min();
+                    float minValue = columnArrays[0].Min();
                     minValue = MathF.Round(minValue);
                     dataExtracted[2] = minValue.ToString();
-                    minValue = columnArrays[4].Min();
+                    minValue = columnArrays[1].Min();
                     minValue = MathF.Round(minValue);
                     dataExtracted[4] = minValue.ToString();
 
@@ -829,10 +785,10 @@ public class VisualizeResults : MonoBehaviour
 
                 else if (i == 8)
                 {
-                    float maxValue = columnArrays[17].Max();
+                    float maxValue = columnArrays[14].Max();
                     maxValue = MathF.Round(maxValue);
                     dataExtracted[35] = maxValue.ToString();
-                    float minValue = columnArrays[17].Min();
+                    float minValue = columnArrays[14].Min();
                     minValue = MathF.Round(minValue);
                     dataExtracted[36] = minValue.ToString();
 
@@ -876,8 +832,7 @@ public class VisualizeResults : MonoBehaviour
                 using (StreamWriter writer = new StreamWriter(dataSavePath, append: true))
                 {
                     string header = "Date" + "\t" + "ThumbMCP Extend" + "\t" + "ThumbMCP Flex" + "\t" +
-                        "ThumbIP Extend" + "\t" + "ThumbIP Flex" + "\t" + "ThumbCMCx Max" + "\t" + "Thumb CMCx Min" + "\t" +
-                        "ThumbCMCy Max" + "\t" + "Thumb CMCy Min" + "\t" + "ThumbCMCz Max" + "\t" + "Thumb CMCz Min" + "\t" +
+                        "ThumbIP Extend" + "\t" + "ThumbIP Flex" + "\t" +
                         "IndexMCP Ext" + "\t" + "IndexMCP Flex" + "\t" + "IndexPIP Ext" + "\t" + "IndexPIP Flex" + "\t" + "IndexDIP Ext" + "\t" + "IndexDIP Flex" + "\t" +
                         "MiddleMCP Ext" + "\t" + "MiddleMCP Flex" + "\t" + "MiddlePIP Ext" + "\t" + "MiddlePIP Flex" + "\t" + "MiddleDIP Ext" + "\t" + "MiddleDIP Flex" + "\t" +
                         "RingMCP Ext" + "\t" + "RingMCP Flex" + "\t" + "RingPIP Ext" + "\t" + "RingPIP Flex" + "\t" + "RingDIP Ext" + "\t" + "RingDIP Flex" + "\t" +
