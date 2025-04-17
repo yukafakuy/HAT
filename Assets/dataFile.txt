@@ -2,3 +2,11 @@ Date	ThumbMCP Extend	ThumbMCP Flex	ThumbIP Extend	ThumbIP Flex	ThumbCMCx Max	Thu
 2025-03-03	null	null	null	null	null	null	null	null	null	null	null	-71	null	-83	null	-44	null	-81	null	-87	null	-41	null	-79	null	-84	null	-39	null	-77	null	-80	null	-46	null	null
 2025-03-14	13	-22	2	-30	null	null	null	null	null	null	-4	-71	-6	-84	-6	-37	1	-84	-5	-85	-6	-40	14	-85	-4	-83	-6	-42	29	-83	-3	-75	-4	-42	-29	-39
 2025-03-14	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null
+2025-04-17	11	34	26	59	null	null	null	null	null	null	13	60	39	100	47	28	7	68	17	97	18	40	8	71	19	97	13	41	7	77	6	86	6	45	90	0
+2025-04-17	null	null	null	null	null	null	null	null	null	null	5	null	5	null	1	null	2	null	5	null	3	null	5	null	7	null	3	null	9	null	4	null	4	null	null	null
+2025-04-15	null	null	null	null	null	null	null	null	null	null	6	null	7	null	4	null	3	null	4	null	3	null	3	null	3	null	4	null	11	null	4	null	5	null	null	null
+2025-04-17	null	null	null	null	null	null	null	null	null	null	6	null	3	null	1	null	3	null	4	null	2	null	2	null	5	null	2	null	8	null	1	null	2	null	null	null
+2025-04-17	null	null	null	null	null	null	null	null	null	null	7	null	3	null	1	null	3	null	5	null	2	null	3	null	4	null	3	null	8	null	3	null	4	null	null	null
+2025-04-17	null	null	null	null	null	null	null	null	null	null	5	null	3	null	1	null	2	null	4	null	2	null	2	null	4	null	3	null	6	null	3	null	4	null	null	null
+2025-04-17	null	null	null	null	null	null	null	null	null	null	13	null	12	null	5	null	8	null	5	null	4	null	5	null	7	null	4	null	7	null	7	null	4	null	null	null
+2025-04-18	null	null	null	null	null	null	null	null	null	null	5	null	3	null	2	null	3	null	4	null	2	null	2	null	4	null	3	null	7	null	4	null	4	null	null	null

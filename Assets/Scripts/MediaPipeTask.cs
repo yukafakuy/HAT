@@ -49,6 +49,8 @@ public class MediaPipeTask : MonoBehaviour
     //popup
     public GameObject PopupWindow;
     public Button NextTaskButton, RetakeButton;
+    public GameObject PopupWindowOtherHand;
+    public Button SkipButton, ProceedButton;
 
     //task list
     private bool task1Flag, task2Flag, task3Flag, task4Flag, task5Flag, task6Flag, task7Flag = false;
@@ -57,9 +59,9 @@ public class MediaPipeTask : MonoBehaviour
     private string lineText;
 
     //Data saving
-    private string path_leapRight;
-    private StreamWriter rawLeapRight;
-    private string rawDataRight;
+    private string path_leapRight, path_leapLeft;
+    private StreamWriter rawLeapRight, rawLeapLeft;
+    private string rawDataRight, rawDataLeft;
 
     //Inactivity
     public float inactivtiyThreshold = 5f;
@@ -92,6 +94,8 @@ public class MediaPipeTask : MonoBehaviour
         Exit.onClick.AddListener(ExitOnClick);
         NextTaskButton.onClick.AddListener(NextTaskOnClick);
         RetakeButton.onClick.AddListener(RetakeButtonOnClick);
+        SkipButton.onClick.AddListener(SkipButtonOnClick);
+        ProceedButton.onClick.AddListener(ProceedButtonOnClick);
 
         instruction.text = "Place the palm facing the camera.";
 
@@ -103,81 +107,148 @@ public class MediaPipeTask : MonoBehaviour
         Scene currentScene = SceneManager.GetActiveScene();
         int scene = currentScene.buildIndex;
 
-        if (scene == 2)
+        if (scene == 8)
         {
             task1Flag = true;
             taskText = "<b>Finger Extension</b>";
             title.text = "Finger Extension";
             InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1;
-            path_leapRight = Application.dataPath + "/rightHand1.txt";
-            rawLeapRight = File.CreateText(path_leapRight);
+            if (SetUp.rightHandFlag)
+            {
+                path_leapRight = Application.dataPath + "/rightHand1.txt";
+                rawLeapRight = File.CreateText(path_leapRight);
+            }
+            else
+            {
+                path_leapLeft = Application.dataPath + "/leftHand1.txt";
+                rawLeapLeft = File.CreateText(path_leapLeft);
+            }
             audioSource.clip = ClipOrientation1;
         }
-        else if (scene == 3)
+        else if (scene == 9)
         {
             task2Flag = true;
             taskText = "<b>MCP Flexion</b>";
             title.text = "MCP Flexion";
             InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage2;
-            path_leapRight = Application.dataPath + "/rightHand2.txt";
-            rawLeapRight = File.CreateText(path_leapRight);
+            if (SetUp.rightHandFlag)
+            {
+                path_leapRight = Application.dataPath + "/rightHand2.txt";
+                rawLeapRight = File.CreateText(path_leapRight);
+            }
+            else
+            {
+                path_leapLeft = Application.dataPath + "/leftHand2.txt";
+                rawLeapLeft = File.CreateText(path_leapLeft);
+            }
             audioSource.clip = ClipOrientation2;
         }
-        else if (scene == 4)
+        else if (scene == 10)
         {
             task3Flag = true;
             taskText = "<b>PIP/DIP Flexion</b>";
             title.text = "PIP/DIP Flexion";
             InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1;
-            path_leapRight = Application.dataPath + "/rightHand3.txt";
-            rawLeapRight = File.CreateText(path_leapRight);
+            if (SetUp.rightHandFlag)
+            {
+                path_leapRight = Application.dataPath + "/rightHand3.txt";
+                rawLeapRight = File.CreateText(path_leapRight);
+            }
+            else
+            {
+                path_leapLeft = Application.dataPath + "/leftHand3.txt";
+                rawLeapLeft = File.CreateText(path_leapLeft);
+            }
             audioSource.clip = ClipOrientation1;
         }
-        else if (scene == 5)
+        else if (scene == 11)
         {
             task4Flag = true;
             taskText = "<b>Thumb Out</b>";
             title.text = "Thumb Out";
             InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1;
-            path_leapRight = Application.dataPath + "/rightHand5.txt";
-            rawLeapRight = File.CreateText(path_leapRight);
+            if (SetUp.rightHandFlag)
+            {
+                path_leapRight = Application.dataPath + "/rightHand5.txt";
+                rawLeapRight = File.CreateText(path_leapRight);
+            }
+            else
+            {
+                path_leapLeft = Application.dataPath + "/leftHand5.txt";
+                rawLeapLeft = File.CreateText(path_leapLeft);
+            }
             audioSource.clip = ClipOrientation1;
         }
-        else if (scene == 6)
+        else if (scene == 12)
         {
             task5Flag = true;
             taskText = "<b>Thumb In</b>";
             title.text = "Thumb In";
             InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1;
-            path_leapRight = Application.dataPath + "/rightHand7.txt";
-            rawLeapRight = File.CreateText(path_leapRight);
+            if (SetUp.rightHandFlag)
+            {
+                path_leapRight = Application.dataPath + "/rightHand7.txt";
+                rawLeapRight = File.CreateText(path_leapRight);
+            }
+            else
+            {
+                path_leapLeft = Application.dataPath + "/leftHand7.txt";
+                rawLeapLeft = File.CreateText(path_leapLeft);
+            }
             audioSource.clip = ClipOrientation1;
         }
-        else if (scene == 7)
+        else if (scene == 13)
         {
             task6Flag = true;
             taskText = "<b>Wrist Flexion/Extension</b>";
             title.text = "Wrist Flexion/Extension";
             InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage2;
-            path_leapRight = Application.dataPath + "/rightHand8.txt";
-            rawLeapRight = File.CreateText(path_leapRight);
+            if (SetUp.rightHandFlag)
+            {
+                path_leapRight = Application.dataPath + "/rightHand8.txt";
+                rawLeapRight = File.CreateText(path_leapRight);
+            }
+            else
+            {
+                path_leapLeft = Application.dataPath + "/leftHand8.txt";
+                rawLeapLeft = File.CreateText(path_leapLeft);
+            }
             audioSource.clip = ClipOrientation2;
         }
 
         //populate the list
         for (int i = 0; i < 6; i++)
         {
-            if (SelectTasks.taskList[i] == 1 && scene != i + 2)
+            if (SelectTasks.taskList[i] == 1 && scene != i + 8)
             {
                 lineText = lineText + "<br>" + taskNames[i];
             }
-            else if (SelectTasks.taskList[i] == 1 && scene == i + 2)
+            else if (SelectTasks.taskList[i] == 1 && scene == i + 8)
             {
                 lineText = lineText + "<br>" + taskText;
             }
         }
 
         task1Text.text = lineText;
+    }
+
+    void SkipButtonOnClick()
+    {
+        SceneManager.LoadScene("Result");
+    }
+
+    void ProceedButtonOnClick()
+    {
+        if (SetUp.rightHandFlag)
+        {
+            SetUp.rightHandFlag = false;
+            SceneManager.LoadScene("Select Task - Left Hand");
+        }
+        else
+        {
+            SetUp.rightHandFlag = true;
+            SceneManager.LoadScene("Select Task - Right Hand");
+        }
     }
 
     void RetakeButtonOnClick()
@@ -205,24 +276,48 @@ public class MediaPipeTask : MonoBehaviour
 
     void NextTaskOnClick()
     {
-        rawLeapRight.Close();
+        if (SetUp.rightHandFlag)
+        {
+            rawLeapRight.Close();
+        }
+        else
+        {
+            rawLeapLeft.Close();
+        }
         PopupWindow.SetActive(false);
         popupFlag = false;
 
         Scene currentScene = SceneManager.GetActiveScene();
         int scene = currentScene.buildIndex;
-        SelectTasks.taskCompleteList[scene - 2] = 1;
+        SelectTasks.taskCompleteList[scene - 8] = 1;
 
         for (int i = 0; i < 6; i++)
         {
             if (SelectTasks.taskList[i] == 1 && SelectTasks.taskCompleteList[i] == 0)
             {
-                SceneManager.LoadScene(i + 2);
-                break;
+                if (SetUp.webcamFlag == false)
+                {
+                    SceneManager.LoadScene(i + 2);
+                    break;
+                }
+                else if (SetUp.webcamFlag == true)
+                {
+                    SceneManager.LoadScene(i + 8);
+                    break;
+                }
             }
             else
             {
-                SceneManager.LoadScene(8);
+                if (SetUp.bothHandFlag)
+                {
+                    SetUp.bothHandFlag = false;
+                    PopupWindowOtherHand.SetActive(true);
+                    return;
+                }
+                else
+                {
+                    SceneManager.LoadScene("Result");
+                }
             }
         }
     }
@@ -234,27 +329,46 @@ public class MediaPipeTask : MonoBehaviour
 
     void PastResultOnClick()
     {
-        SceneManager.LoadScene(8);
+        SceneManager.LoadScene("Result");
     }
 
     void ExitOnClick()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene("Log-In");
     }
 
     void HandDetection()
     {
-        if (_handLandmarkerRunner != null && _handLandmarkerRunner.handJoints.All(joint => !float.IsNaN(joint)))
+        if (SetUp.rightHandFlag)
         {
-            stopWatch.Start();
-            stopWatchFlag = true;
+            //if (_handLandmarkerRunner != null && _handLandmarkerRunner.handJoints.All(joint => !float.IsNaN(joint)))
+            if (_handLandmarkerRunner.handLabel == "Right")
+            {
+                stopWatch.Start();
+                stopWatchFlag = true;
+            }
+            else
+            {
+                stopWatch.Reset();
+                stopWatchFlag = false;
+                slider.value = 0;
+            }
         }
         else
         {
-            stopWatch.Reset();
-            stopWatchFlag = false;
-            slider.value = 0;
+            if (_handLandmarkerRunner.handLabel == "Left")
+            {
+                stopWatch.Start();
+                stopWatchFlag = true;
+            }
+            else
+            {
+                stopWatch.Reset();
+                stopWatchFlag = false;
+                slider.value = 0;
+            }
         }
+        
 
         if (stopWatchFlag)
         {
@@ -284,102 +398,110 @@ public class MediaPipeTask : MonoBehaviour
         }
     }
 
-    float getAnglesZ(GameObject joint)
-    {
-        float angle;
-
-        if (joint.transform.localEulerAngles.z <= 180)
-        {
-            angle = joint.transform.localEulerAngles.z;
-        }
-        else
-        {
-            angle = joint.transform.localEulerAngles.z - 360f;
-        }
-
-        return angle;
-    }
-
-    float getAnglesX(GameObject joint)
-    {
-        float angle;
-
-        if (joint.transform.localEulerAngles.x <= 180)
-        {
-            angle = joint.transform.localEulerAngles.x;
-        }
-        else
-        {
-            angle = joint.transform.localEulerAngles.x - 360f;
-        }
-
-        return angle;
-    }
-
-    float getAnglesY(GameObject joint)
-    {
-        float angle;
-
-        if (joint.transform.localEulerAngles.y <= 180)
-        {
-            angle = joint.transform.localEulerAngles.y;
-        }
-        else
-        {
-            angle = joint.transform.localEulerAngles.y - 360f;
-        }
-
-        return angle;
-    }
 
     void collectDataLeap()
     {
-        if (_handLandmarkerRunner != null && _handLandmarkerRunner.handJoints.All(joint => !float.IsNaN(joint)))
+        if (SetUp.rightHandFlag)
         {
+            if (_handLandmarkerRunner.handLabel == "Right" && _handLandmarkerRunner != null && _handLandmarkerRunner.handJoints.All(joint => !float.IsNaN(joint)))
+            {
 
-            // Regular way of extracting data from the virtual hand
+                // Regular way of extracting data from the virtual hand
 
-            //thumb
-            float thumb_MCP = _handLandmarkerRunner.handJoints[0];
-            float thumb_IP = _handLandmarkerRunner.handJoints[1];
+                //thumb
+                float thumb_MCP = _handLandmarkerRunner.handJoints[0];
+                float thumb_IP = _handLandmarkerRunner.handJoints[1];
 
-            //index
-            float index_MCP = _handLandmarkerRunner.handJoints[2];
-            float index_PIP = _handLandmarkerRunner.handJoints[3];
-            float index_DIP = _handLandmarkerRunner.handJoints[4];
+                //index
+                float index_MCP = _handLandmarkerRunner.handJoints[2];
+                float index_PIP = _handLandmarkerRunner.handJoints[3];
+                float index_DIP = _handLandmarkerRunner.handJoints[4];
 
-            //middle
-            float middle_MCP = _handLandmarkerRunner.handJoints[5];
-            float middle_PIP = _handLandmarkerRunner.handJoints[6];
-            float middle_DIP = _handLandmarkerRunner.handJoints[7];
+                //middle
+                float middle_MCP = _handLandmarkerRunner.handJoints[5];
+                float middle_PIP = _handLandmarkerRunner.handJoints[6];
+                float middle_DIP = _handLandmarkerRunner.handJoints[7];
 
-            //ring
-            float ring_MCP = _handLandmarkerRunner.handJoints[8];
-            float ring_PIP = _handLandmarkerRunner.handJoints[9];
-            float ring_DIP = _handLandmarkerRunner.handJoints[10];
+                //ring
+                float ring_MCP = _handLandmarkerRunner.handJoints[8];
+                float ring_PIP = _handLandmarkerRunner.handJoints[9];
+                float ring_DIP = _handLandmarkerRunner.handJoints[10];
 
-            //pinky
-            float pinky_MCP = _handLandmarkerRunner.handJoints[11];
-            float pinky_PIP = _handLandmarkerRunner.handJoints[12];
-            float pinky_DIP = _handLandmarkerRunner.handJoints[13];
+                //pinky
+                float pinky_MCP = _handLandmarkerRunner.handJoints[11];
+                float pinky_PIP = _handLandmarkerRunner.handJoints[12];
+                float pinky_DIP = _handLandmarkerRunner.handJoints[13];
 
-            //wrist
-            float wrist_flex = _handLandmarkerRunner.handJoints[14];
+                //wrist
+                float wrist_flex = _handLandmarkerRunner.handJoints[14];
 
-            //Vector3 palm_normal = rightHand.PalmNormal;
-            //Vector3 palm_direction = rightHand.Direction;
-            //float wrist_flex = (float)(Math.Atan2(palm_direction.x, palm_direction.z) * 180 / Math.PI);
+                //Vector3 palm_normal = rightHand.PalmNormal;
+                //Vector3 palm_direction = rightHand.Direction;
+                //float wrist_flex = (float)(Math.Atan2(palm_direction.x, palm_direction.z) * 180 / Math.PI);
 
-            rawDataRight = thumb_MCP + "\t" + thumb_IP + "\t" +
-                index_MCP + "\t" + index_PIP + "\t" + index_DIP + "\t" +
-                middle_MCP + "\t" + middle_PIP + "\t" + middle_DIP + "\t" +
-                ring_MCP + "\t" + ring_PIP + "\t" + ring_DIP + "\t" +
-                pinky_MCP + "\t" + pinky_PIP + "\t" + pinky_DIP + "\t" + wrist_flex;
+                rawDataRight = thumb_MCP + "\t" + thumb_IP + "\t" +
+                    index_MCP + "\t" + index_PIP + "\t" + index_DIP + "\t" +
+                    middle_MCP + "\t" + middle_PIP + "\t" + middle_DIP + "\t" +
+                    ring_MCP + "\t" + ring_PIP + "\t" + ring_DIP + "\t" +
+                    pinky_MCP + "\t" + pinky_PIP + "\t" + pinky_DIP + "\t" + wrist_flex +
+                    "\t" + SetUp.preTherapyFlag.ToString() + "\t" + SetUp.webcamFlag.ToString();
 
-            //UnityEngine.Debug.Log(index_PIP);
+                //UnityEngine.Debug.Log(index_PIP);
 
-            rawLeapRight.WriteLine(rawDataRight);
+                rawLeapRight.WriteLine(rawDataRight);
+            }
         }
+        else
+        {
+            if (_handLandmarkerRunner.handLabel == "Left" && _handLandmarkerRunner != null && _handLandmarkerRunner.handJoints.All(joint => !float.IsNaN(joint)))
+            {
+
+                // Regular way of extracting data from the virtual hand
+
+                //thumb
+                float thumb_MCP = _handLandmarkerRunner.handJoints[0];
+                float thumb_IP = _handLandmarkerRunner.handJoints[1];
+
+                //index
+                float index_MCP = _handLandmarkerRunner.handJoints[2];
+                float index_PIP = _handLandmarkerRunner.handJoints[3];
+                float index_DIP = _handLandmarkerRunner.handJoints[4];
+
+                //middle
+                float middle_MCP = _handLandmarkerRunner.handJoints[5];
+                float middle_PIP = _handLandmarkerRunner.handJoints[6];
+                float middle_DIP = _handLandmarkerRunner.handJoints[7];
+
+                //ring
+                float ring_MCP = _handLandmarkerRunner.handJoints[8];
+                float ring_PIP = _handLandmarkerRunner.handJoints[9];
+                float ring_DIP = _handLandmarkerRunner.handJoints[10];
+
+                //pinky
+                float pinky_MCP = _handLandmarkerRunner.handJoints[11];
+                float pinky_PIP = _handLandmarkerRunner.handJoints[12];
+                float pinky_DIP = _handLandmarkerRunner.handJoints[13];
+
+                //wrist
+                float wrist_flex = _handLandmarkerRunner.handJoints[14];
+
+                //Vector3 palm_normal = rightHand.PalmNormal;
+                //Vector3 palm_direction = rightHand.Direction;
+                //float wrist_flex = (float)(Math.Atan2(palm_direction.x, palm_direction.z) * 180 / Math.PI);
+
+                rawDataLeft = thumb_MCP + "\t" + thumb_IP + "\t" +
+                    index_MCP + "\t" + index_PIP + "\t" + index_DIP + "\t" +
+                    middle_MCP + "\t" + middle_PIP + "\t" + middle_DIP + "\t" +
+                    ring_MCP + "\t" + ring_PIP + "\t" + ring_DIP + "\t" +
+                    pinky_MCP + "\t" + pinky_PIP + "\t" + pinky_DIP + "\t" + wrist_flex +
+                    "\t" + SetUp.preTherapyFlag.ToString() + "\t" + SetUp.webcamFlag.ToString();
+
+                //UnityEngine.Debug.Log(index_PIP);
+
+                rawLeapLeft.WriteLine(rawDataLeft);
+            }
+        }
+        
     }
 
     void ResetInactivityTimer()

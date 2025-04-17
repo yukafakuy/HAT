@@ -146,7 +146,7 @@ GameObject:
   - component: {fileID: 2666482344816594611}
   - component: {fileID: 2112113883368956170}
   m_Layer: 5
-  m_Name: PopUp Window 2 - Ready for your left hand
+  m_Name: PopUp Window (Select Which Hand to Start With)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -19,9 +19,9 @@ public class LogIn : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        PatiendIDField.onEndEdit.AddListener(LockPatientID);
-        ProvidersNameField.onEndEdit.AddListener(LockProvidersName);
-        TodaysDateField.onEndEdit.AddListener(LockTodaysDate);
+        PatiendIDField.onValueChanged.AddListener(LockPatientID);
+        ProvidersNameField.onValueChanged.AddListener(LockProvidersName);
+        TodaysDateField.onValueChanged.AddListener(LockTodaysDate);
 
         EnterButton.onClick.AddListener(EnterButtonOnClick);
         EnterButton.interactable = false;
@@ -79,6 +79,11 @@ public class LogIn : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Application.Quit();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Return) && EnterButton.interactable) // 'Return' is the Enter key
+        {
+            SceneManager.LoadScene(1);
         }
     }
 

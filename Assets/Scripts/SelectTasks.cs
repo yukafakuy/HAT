@@ -43,8 +43,17 @@ public class SelectTasks : MonoBehaviour
         {
             if(taskList[i] == 1)
             {
-                SceneManager.LoadScene(i+2);
-                break;
+                if (SetUp.webcamFlag == false)
+                {
+                    SceneManager.LoadScene(i + 2);
+                    break;
+                }
+                else if (SetUp.webcamFlag == true)
+                {
+                    UnityEngine.Debug.Log("loading scene " + (i + 8).ToString());
+                    SceneManager.LoadScene(i + 8);
+                    break;
+                }
             }
         }
     }
@@ -56,7 +65,7 @@ public class SelectTasks : MonoBehaviour
 
     void PastResultOnClick()
     {
-        SceneManager.LoadScene(8);
+        SceneManager.LoadScene("Result");
     }
 
     void CountTasks()

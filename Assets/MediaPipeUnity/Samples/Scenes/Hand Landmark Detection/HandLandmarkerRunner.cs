@@ -1,10 +1,11 @@
-// Copyright (c) 2023 homuler
+﻿// Copyright (c) 2023 homuler
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
 using System.Collections;
+using System.Diagnostics.Tracing;
 using Mediapipe.Tasks.Vision.HandLandmarker;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -16,6 +17,7 @@ namespace Mediapipe.Unity.Sample.HandLandmarkDetection
   {
         //[SerializeField] public Transform[] handJoints; 
     public float[] handJoints;
+        public string handLabel;
     [SerializeField] private HandLandmarkerResultAnnotationController _handLandmarkerResultAnnotationController;
 
     private Experimental.TextureFramePool _textureFramePool;
@@ -162,6 +164,30 @@ namespace Mediapipe.Unity.Sample.HandLandmarkDetection
             {
                 for (int i = 0; i < result.handLandmarks.Count; i++)
                 {
+                    // ✅ Get handedness for the same hand index
+                    if (result.handedness != null && i < result.handedness.Count)
+                    {
+                        var handedness = result.handedness[i];
+                        handLabel = null;
+                        if (handedness.categories != null && handedness.categories.Count > 0)
+                        {
+                            string label = handedness.categories[0].categoryName; // "Left" or "Right"
+                            if (label == "Left")
+                            {
+                                handLabel = "Right";
+                            }
+                            else if (label == "Right")
+                            {
+                                handLabel = "Left";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        handLabel = null;
+                    }
+
+
                     //Debug.Log($"Hand {i + 1} Landmarks:");
                     handJoints = new float[15];
 
@@ -284,6 +310,10 @@ namespace Mediapipe.Unity.Sample.HandLandmarkDetection
 
                     handJoints[14] = wristAngle;
                 }
+            }
+            else
+            {
+                handLabel = null;
             }
     }
 
