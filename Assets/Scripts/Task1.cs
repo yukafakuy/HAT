@@ -15,7 +15,7 @@ using Leap.Unity;
 
 public class Task1 : MonoBehaviour
 {
-    public TMP_Text patientID, providersName, todaysDate;
+    public TMP_Text patientID, providersName, todaysDate, handIndication;
     public Button PastResult, SignOut, Exit;
     public TMP_Text title, instruction;
     public GameObject HandDetectionBar;
@@ -37,8 +37,11 @@ public class Task1 : MonoBehaviour
 
     //Images
     public Sprite OrientationImage1, OrientationImage2, PositionImage1,
-        PositionImage2, PositionImage3, PositionImage4, PositionImage5,
-        PositionImage6, PositionImage7, PositionImage8, PositionImage9;
+        PositionImage2, PositionImage3, PositionImage5,
+        PositionImage7, PositionImage8, PositionImage9;
+    public Sprite OrientationImage1_left, OrientationImage2_left, PositionImage1_left,
+        PositionImage2_left, PositionImage3_left, PositionImage5_left,
+        PositionImage7_left, PositionImage8_left, PositionImage9_left;
 
     //Progress Bar
     public Slider slider;
@@ -90,6 +93,15 @@ public class Task1 : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        if (SetUp.rightHandFlag)
+        {
+            handIndication.text = "Right Hand";
+        }
+        else
+        {
+            handIndication.text = "Left Hand";
+        }
 
         audioSource.clip = beepSound;
         audioSource.Play();
@@ -273,48 +285,46 @@ public class Task1 : MonoBehaviour
         else
         {
             rawLeapLeft.Close();
-        }        
+        }
         PopupWindow.SetActive(false);
         popupFlag = false;
 
         Scene currentScene = SceneManager.GetActiveScene();
         int scene = currentScene.buildIndex;
-        SelectTasks.taskCompleteList[scene-2] = 1;
+        SelectTasks.taskCompleteList[scene - 8] = 1;
 
         for (int i = 0; i < 6; i++)
         {
-            if(SelectTasks.taskList[i] == 1 && SelectTasks.taskCompleteList[i] == 0)
+            if (SelectTasks.taskList[i] == 1 && SelectTasks.taskCompleteList[i] == 0)
             {
-                if (SetUp.webcamFlag == false)
+                if (!SetUp.webcamFlag)
                 {
                     SceneManager.LoadScene(i + 2);
-                    break;
-                }
-                else if (SetUp.webcamFlag == true)
-                {
-                    SceneManager.LoadScene(i + 8);
-                    break;
-                }
-            }
-            else
-            {
-                if (SetUp.bothHandFlag)
-                {
-                    SetUp.bothHandFlag = false;
-                    PopupWindowOtherHand.SetActive(true);
                     return;
                 }
                 else
                 {
-                    SceneManager.LoadScene("Result");
+                    SceneManager.LoadScene(i + 8);
+                    return;
                 }
             }
+        }
+
+        // If we reached this point, all selected tasks are completed
+        if (SetUp.bothHandFlag)
+        {
+            SetUp.bothHandFlag = false;
+            PopupWindowOtherHand.SetActive(true);
+        }
+        else
+        {
+            SceneManager.LoadScene("New Result");
         }
     }
 
     void SkipButtonOnClick()
     {
-        SceneManager.LoadScene("Result");
+        SceneManager.LoadScene("New Result");
     }
 
     void ProceedButtonOnClick()
@@ -338,7 +348,7 @@ public class Task1 : MonoBehaviour
 
     void PastResultOnClick()
     {
-        SceneManager.LoadScene("Result");
+        SceneManager.LoadScene("New Result");
     }
 
     void ExitOnClick()
@@ -510,7 +520,7 @@ public class Task1 : MonoBehaviour
                     middle_MCP + "\t" + middle_PIP + "\t" + middle_DIP + "\t" +
                     ring_MCP + "\t" + ring_PIP + "\t" + ring_DIP + "\t" +
                     pinky_MCP + "\t" + pinky_PIP + "\t" + pinky_DIP + "\t" + wrist_flex +
-                    "\t" + SetUp.preTherapyFlag.ToString() + "\t" + SetUp.webcamFlag.ToString();
+                    "\t" + SetUp.preTherapyFlag + "\t" + SetUp.webcamFlag;
 
                 //UnityEngine.Debug.Log(index_PIP);
 

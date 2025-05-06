@@ -65,7 +65,7 @@ public class SelectTasks : MonoBehaviour
 
     void PastResultOnClick()
     {
-        SceneManager.LoadScene("Result");
+        SceneManager.LoadScene("New Result");
     }
 
     void CountTasks()

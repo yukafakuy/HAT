@@ -14,46 +14,46 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Finger Extension.unity
     guid: 226ab85c2c1534a45804a96b14003bd8
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/MCP Flexion.unity
-    guid: d4cb1e28d2a0e7c4ca651145089d7708
+    guid: 72e9c1aa72d1a844583fe3570824709b
   - enabled: 1
     path: Assets/Scenes/PIP & DIP Flexion.unity
-    guid: d93a8edcbbd226d49a09e0504c0fb43e
+    guid: 8aaa29a4ad974df4f83c5257f7d78076
   - enabled: 1
     path: Assets/Scenes/Thumb Out.unity
-    guid: 90914604ed0dddb48854a9dc77775215
+    guid: d4c70f0989c10ef4bb48c666d6066709
   - enabled: 1
     path: Assets/Scenes/Thumb In.unity
-    guid: d77acc8c6dd010d44879fdfa18511d09
+    guid: 8eeefc127eee9fd4990616b67f08450d
   - enabled: 1
     path: Assets/Scenes/Wrist Flexion Extension.unity
-    guid: da9a9f6f86716c04d926a794da317d6c
+    guid: a8910d8122a8a9d4c9ee6edb281d5138
   - enabled: 1
     path: Assets/Scenes/2Finger Extensions.unity
     guid: 7364c532540367e4984d20978847a7f6
   - enabled: 1
     path: Assets/Scenes/2MCP Flexion.unity
-    guid: 992fed13c7df4bf47be66ea1d6cbe34b
+    guid: 79b53233f0cfd614aa038466bfc8f37b
   - enabled: 1
     path: Assets/Scenes/2PIP & DIP Flexion.unity
-    guid: d0fe883bc9c5cf0469888656e2fdbc9d
+    guid: 36e8c12455f656f48ba8dff8cc0f5c54
   - enabled: 1
     path: Assets/Scenes/2Thumb Out.unity
-    guid: 216b129370f242e4f8e513b684e444be
+    guid: 619552773e560ad4685161931b3fdf7c
   - enabled: 1
     path: Assets/Scenes/2Thumb In.unity
-    guid: 12a12b4d210f199468fc26d8c5ef1daf
+    guid: e874ef41f4a8a2543af7c0d6259ddcb0
   - enabled: 1
     path: Assets/Scenes/2Wrist Flexion Extension.unity
-    guid: a94fb8ab5526d41439a5a2eb37bc609b
-  - enabled: 1
-    path: Assets/Scenes/Result.unity
-    guid: e1570592e148f45d1a0e291653ad0f2d
+    guid: 0c612a3bb45b1d54cae19a23eaa98a87
   - enabled: 1
     path: Assets/Scenes/Select Task - Left Hand.unity
     guid: 1823b45192cb14cab9efabf2c11b5fbd
   - enabled: 1
     path: Assets/Scenes/Select Task - Right Hand.unity
     guid: d4724bbf4d6fb4fff9beb1592a57ec85
+  - enabled: 1
+    path: Assets/Scenes/New Result.unity
+    guid: 1e92f34eb2dba42bbb654d1e08b8f3c6
   m_configObjects: {}
