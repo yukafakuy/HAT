@@ -291,7 +291,7 @@ public class Task1 : MonoBehaviour
 
         Scene currentScene = SceneManager.GetActiveScene();
         int scene = currentScene.buildIndex;
-        SelectTasks.taskCompleteList[scene - 8] = 1;
+        SelectTasks.taskCompleteList[scene - 2] = 1;
 
         for (int i = 0; i < 6; i++)
         {

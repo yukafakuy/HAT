@@ -350,7 +350,7 @@ public class VisualizeResults : MonoBehaviour
 
     private void extractData(string path, string pathSave)
     {
-        string[] dataExtracted = Enumerable.Repeat("null", 32).ToArray();
+        string[] dataExtracted = Enumerable.Repeat("null", 33).ToArray();
 
         List<bool> filesExist = new List<bool> {false,false, false, false, false, false, false, false};
 
