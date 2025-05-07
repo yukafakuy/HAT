@@ -133,14 +133,15 @@ public class Task1 : MonoBehaviour
             task1Flag = true;
             taskText= "<b>Finger Extension</b>";
             title.text = "Finger Extension";
-            InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1;
             if (SetUp.rightHandFlag)
             {
+                InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1;
                 path_leapRight = Application.dataPath + "/rightHand1.txt";
                 rawLeapRight = File.CreateText(path_leapRight);
             }
             else
             {
+                InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1_left;
                 path_leapLeft = Application.dataPath + "/leftHand1.txt";
                 rawLeapLeft = File.CreateText(path_leapLeft);
             }
@@ -151,14 +152,15 @@ public class Task1 : MonoBehaviour
             task2Flag = true;
             taskText = "<b>MCP Flexion</b>";
             title.text = "MCP Flexion";
-            InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage2;
             if (SetUp.rightHandFlag)
             {
+                InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage2;
                 path_leapRight = Application.dataPath + "/rightHand2.txt";
                 rawLeapRight = File.CreateText(path_leapRight);
             }
             else
             {
+                InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage2_left;
                 path_leapLeft = Application.dataPath + "/leftHand2.txt";
                 rawLeapLeft = File.CreateText(path_leapLeft);
             }
@@ -169,14 +171,15 @@ public class Task1 : MonoBehaviour
             task3Flag = true;
             taskText = "<b>PIP/DIP Flexion</b>";
             title.text = "PIP/DIP Flexion";
-            InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1;
             if (SetUp.rightHandFlag)
             {
+                InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1;
                 path_leapRight = Application.dataPath + "/rightHand3.txt";
                 rawLeapRight = File.CreateText(path_leapRight);
             }
             else
             {
+                InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1_left;
                 path_leapLeft = Application.dataPath + "/leftHand3.txt";
                 rawLeapLeft = File.CreateText(path_leapLeft);
             }
@@ -187,14 +190,15 @@ public class Task1 : MonoBehaviour
             task4Flag = true;
             taskText = "<b>Thumb Out</b>";
             title.text = "Thumb Out";
-            InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1;
             if (SetUp.rightHandFlag)
             {
+                InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1;
                 path_leapRight = Application.dataPath + "/rightHand5.txt";
                 rawLeapRight = File.CreateText(path_leapRight);
             }
             else
             {
+                InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1_left;
                 path_leapLeft = Application.dataPath + "/leftHand5.txt";
                 rawLeapLeft = File.CreateText(path_leapLeft);
             }
@@ -205,14 +209,15 @@ public class Task1 : MonoBehaviour
             task5Flag = true;
             taskText = "<b>Thumb In</b>";
             title.text = "Thumb In";
-            InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1;
             if (SetUp.rightHandFlag)
             {
+                InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1;
                 path_leapRight = Application.dataPath + "/rightHand7.txt";
                 rawLeapRight = File.CreateText(path_leapRight);
             }
             else
             {
+                InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1_left;
                 path_leapLeft = Application.dataPath + "/leftHand7.txt";
                 rawLeapLeft = File.CreateText(path_leapLeft);
             }
@@ -223,14 +228,15 @@ public class Task1 : MonoBehaviour
             task6Flag = true;
             taskText = "<b>Wrist Flexion/Extension</b>";
             title.text = "Wrist Flexion/Extension";
-            InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage2;
             if (SetUp.rightHandFlag)
             {
+                InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage2;
                 path_leapRight = Application.dataPath + "/rightHand8.txt";
                 rawLeapRight = File.CreateText(path_leapRight);
             }
             else
             {
+                InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage2_left;
                 path_leapLeft = Application.dataPath + "/leftHand8.txt";
                 rawLeapLeft = File.CreateText(path_leapLeft);
             }
@@ -598,43 +604,92 @@ public class Task1 : MonoBehaviour
             {
                 if (task1Flag)
                 {
-                    InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage1;
+                    if (SetUp.rightHandFlag)
+                    {
+                        InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage1;
+                    }
+                    else
+                    {
+                        InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage1_left;
+                    }
                     instruction.text = "Open your fingers as much as you can and hold this pose for 2 seconds.";
                     audioSource.clip = ClipPosition1;
                 }
                 else if (task2Flag)
                 {
-                    InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage2;
+                    if (SetUp.rightHandFlag)
+                    {
+                        InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage2;
+                    }
+                    else
+                    {
+                        InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage2_left;
+                    }
                     instruction.text = "Make a fist and hold for 2 seconds.";
                     audioSource.clip = ClipPosition2;
                 }
                 else if (task3Flag)
                 {
-                    InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage3;
+                    if (SetUp.rightHandFlag)
+                    {
+                        InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage3;
+                    }
+                    else
+                    {
+                        InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage3_left;
+                    }
                     instruction.text = "Curl your fingers at the middle knuckles to a 90-degree angle, bringing your 4 fingertips down. Hold for 2 seconds.";
                     audioSource.clip = ClipPosition3;
                 }
                 else if (task4Flag)
                 {
-                    InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage5;
+                    if (SetUp.rightHandFlag)
+                    {
+                        InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage5;
+                    }
+                    else
+                    {
+                        InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage5_left;
+                    }
                     instruction.text = "Open and extend your thumb. Hold for 2 seconds.";
                     audioSource.clip = ClipPosition5;
                 }
                 else if (task5Flag)
                 {
-                    InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage7;
+                    if (SetUp.rightHandFlag)
+                    {
+                        InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage7;
+                    }
+                    else
+                    {
+                        InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage7_left;
+                    }
                     instruction.text = "Bend your thumb towards your palm and hold for 2 seconds.";
                     audioSource.clip = ClipPosition7;
                 }
                 else if (task6Flag)
                 {
-                    InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage8;
+                    if (SetUp.rightHandFlag)
+                    {
+                        InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage8;
+                    }
+                    else
+                    {
+                        InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage8_left;
+                    }
                     instruction.text = "Bend your wrist forward and hold for 2 seconds.";
                     audioSource.clip = ClipPosition8;
                 }
                 else if (task7Flag)
                 {
-                    InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage9;
+                    if (SetUp.rightHandFlag)
+                    {
+                        InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage9;
+                    }
+                    else
+                    {
+                        InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = PositionImage9_left;
+                    }
                     instruction.text = "Bend your wrist backward and hold for 2 seconds.";
                     audioSource.clip = ClipPosition9;
                 }

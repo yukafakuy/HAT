@@ -1,2 +1,3 @@
 Date	ThumbMCP Extend	ThumbMCP Flex	ThumbIP Extend	ThumbIP Flex	IndexMCP Ext	IndexMCP Flex	IndexPIP Ext	IndexPIP Flex	IndexDIP Ext	IndexDIP Flex	MiddleMCP Ext	MiddleMCP Flex	MiddlePIP Ext	MiddlePIP Flex	MiddleDIP Ext	MiddleDIP Flex	RingMCP Ext	RingMCP Flex	RingPIP Ext	RingPIP Flex	RingDIP Ext	RingDIP Flex	LittleMCP Ext	LittleMCP Flex	LittlePIP Ext	LittlePIP Flex	LittleDIP Ext	LittleDIP Flex	Wrist Ext	Wrist Flex	Pre Therapy Flag	Webcam Flag
-2025-05-07	9	-27	1	-33	null	-71	null	-82	null	-40	null	-89	null	-86	null	-45	null	-97	null	-85	null	-46	null	-94	null	-78	null	-44	69	-73	System.Single[]	System.Single[]
+2025-05-07	19	33	29	24	7	51	5	104	1	38	3	62	5	120	2	31	3	74	3	136	3	22	4	89	4	103	4	50	90	90	System.Single[]	System.Single[]
+2025-05-07	28	22	26	26	6	101	4	70	2	52	2	108	5	83	2	48	2	110	4	127	4	27	7	121	4	56	5	81	90	0	True	True

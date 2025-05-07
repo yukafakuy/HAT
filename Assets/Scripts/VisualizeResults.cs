@@ -11,6 +11,7 @@ using System.Linq;
 using UnityEngine.SceneManagement;
 using UnityEditor;
 using static E2C.E2ChartData;
+using Leap.Unity.Attributes;
 
 public class VisualizeResults : MonoBehaviour
 {
@@ -457,7 +458,15 @@ public class VisualizeResults : MonoBehaviour
                     minValue = MathF.Round(minValue);
                     dataExtracted[24] = minValue.ToString();
 
-                    minValue = columnArrays[3].Min();
+                    dataExtracted[31] = SetUp.preTherapyFlag.ToString();
+                    dataExtracted[32] = SetUp.webcamFlag.ToString();
+
+                    File.Delete(path_new);
+                }
+
+                else if (i == 3)
+                {
+                    float minValue = columnArrays[3].Min();
                     minValue = MathF.Round(minValue);
                     dataExtracted[8] = minValue.ToString();
                     minValue = columnArrays[4].Min();
@@ -484,10 +493,6 @@ public class VisualizeResults : MonoBehaviour
                     minValue = columnArrays[13].Min();
                     minValue = MathF.Round(minValue);
                     dataExtracted[28] = minValue.ToString();
-
-                    dataExtracted[31] = columnArrays[15].ToString();
-                    dataExtracted[32] = columnArrays[16].ToString();
-
 
                     File.Delete(path_new);
                 }
@@ -923,7 +928,14 @@ public class VisualizeResults : MonoBehaviour
 
     private void ThumbButtonOnClick()
     {
-        HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageThumbMCP;
+        if (rightHandFlag)
+        {
+            HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageThumbMCP;
+        }
+        else
+        {
+            HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageThumbMCP_left;
+        }       
 
         thumbFlag = true;
         indexFlag = false;
@@ -949,7 +961,15 @@ public class VisualizeResults : MonoBehaviour
 
     private void IndexButtonOnClick()
     {
-        HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageIndexMCP;
+        if (rightHandFlag)
+        {
+            HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageIndexMCP;
+        }
+        else
+        {
+            HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageIndexMCP_left;
+        }
+        
 
         thumbFlag = false;
         indexFlag = true;
@@ -975,7 +995,14 @@ public class VisualizeResults : MonoBehaviour
 
     private void MiddleButtonOnClick()
     {
-        HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageMiddleMCP;
+        if (rightHandFlag)
+        {
+            HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageMiddleMCP;
+        }
+        else
+        {
+            HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageMiddleMCP_left;
+        }
 
         thumbFlag = false;
         indexFlag = false;
@@ -1001,7 +1028,14 @@ public class VisualizeResults : MonoBehaviour
 
     private void RingButtonOnClick()
     {
-        HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageRingMCP;
+        if (rightHandFlag)
+        {
+            HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageRingMCP;
+        }
+        else
+        {
+            HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageRingMCP_left;
+        }
 
         thumbFlag = false;
         indexFlag = false;
@@ -1027,7 +1061,14 @@ public class VisualizeResults : MonoBehaviour
 
     private void PinkyButtonOnClick()
     {
-        HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imagePinkyMCP;
+        if (rightHandFlag)
+        {
+            HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imagePinkyMCP;
+        }
+        else
+        {
+            HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imagePinkyMCP_left;
+        }       
 
         thumbFlag = false;
         indexFlag = false;
@@ -1052,7 +1093,14 @@ public class VisualizeResults : MonoBehaviour
     }
     private void WristButtonOnClick()
     {
-        HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageWrist;
+        if (rightHandFlag)
+        {
+            HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageWrist;
+        }
+        else
+        {
+            HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageWrist_left;
+        }
 
         thumbFlag = false;
         indexFlag = false;
