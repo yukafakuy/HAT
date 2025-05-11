@@ -61,9 +61,22 @@ public class VisualizeResults : MonoBehaviour
     private string notesPath;
     public TMP_Text PreviousNotes;
 
+    //Return to Task
+    public GameObject returnToTaskSelectionPopup;
+    public Button AgreedToProceedButton, DeclinedToProceedButton;
+
+    public TMP_Text JointDescription;
+
     // Start is called before the first frame update
     void Start()
     {
+        //for now (update later)
+        GraphToggle.interactable = false;
+        NotesToggle.interactable = false;
+        BothToggle.interactable = false;
+        PreToggle.interactable = false;
+        PostToggle.interactable = false;
+
         DateFromField.onValueChanged.AddListener(LockDateFrom);
         DateToField.onValueChanged.AddListener(LockDateTo);
 
@@ -109,6 +122,8 @@ public class VisualizeResults : MonoBehaviour
         SignOutButton.onClick.AddListener(signOut);
         exportToCSVButton.onClick.AddListener(ExportToCSV);
         AddNotesButton.onClick.AddListener(AddNotes);
+        AgreedToProceedButton.onClick.AddListener(AgreedToProceedOnClick);
+        DeclinedToProceedButton.onClick.AddListener(DeclineToProceedOnClick);
 
         //add chart options
         myChart.chartOptions = myChart.gameObject.AddComponent<E2ChartOptions>();
@@ -175,6 +190,8 @@ public class VisualizeResults : MonoBehaviour
         PIPFlag = false;
         DIPFlag = false;
 
+        JointDescription.text = "Metacarpophalangeal Joint";
+
         MCPButton.image.color = new Color(160f / 255f, 223f / 255f, 255f / 255f, 1f);
         PIPButton.image.color = Color.white;
         DIPButton.image.color = Color.white;
@@ -186,6 +203,15 @@ public class VisualizeResults : MonoBehaviour
         PIPFlag = true;
         DIPFlag = false;
 
+        if (thumbFlag)
+        {
+            JointDescription.text = "Interphalangeal Joint";
+        }
+        else
+        {
+            JointDescription.text = "Proximal Interphalangeal Joint";
+        }
+
         MCPButton.image.color = Color.white;
         PIPButton.image.color = new Color(160f / 255f, 223f / 255f, 255f / 255f, 1f);
         DIPButton.image.color = Color.white;
@@ -196,6 +222,8 @@ public class VisualizeResults : MonoBehaviour
         MCPFlag = false;
         PIPFlag = false;
         DIPFlag = true;
+
+        JointDescription.text = "Distal Interphalangeal Joint";
 
         MCPButton.image.color = Color.white;
         PIPButton.image.color = Color.white;
@@ -211,17 +239,28 @@ public class VisualizeResults : MonoBehaviour
     {
         if (SetUp.rightHandFlag && SetUp.bothHandFlagAbsolute == false)
         {
-            filePath = Application.dataPath + "/dataFile_right.txt";
+            filePath = Application.dataPath + "/" + LogIn.PatientID + "_dataFile_right.txt";
             DeleteLastLine2(filePath,null,false);
+            returnToTaskSelectionPopup.SetActive(false);
+            SceneManager.LoadScene("Select Task - Right Hand");
         }
         else if (SetUp.rightHandFlag == false && SetUp.bothHandFlagAbsolute == false)
         {
-            filePath = Application.dataPath + "/dataFile_left.txt";
+            filePath = Application.dataPath + "/" + LogIn.PatientID + "_dataFile_left.txt";
             DeleteLastLine2(filePath,null,false);
+            returnToTaskSelectionPopup.SetActive(false);
+            SceneManager.LoadScene("Select Task - Left Hand");
         }
         else if (SetUp.bothHandFlagAbsolute == true)
         {
-
+            filePath = Application.dataPath + "/" + LogIn.PatientID + "_dataFile_right.txt";
+            DeleteLastLine2(filePath, null, false);
+            filePath = Application.dataPath + "/" + LogIn.PatientID + "_dataFile_left.txt";
+            DeleteLastLine2(filePath, null, false);
+            returnToTaskSelectionPopup.SetActive(false);
+            SetUp.bothHandFlag = true;
+            SetUp.rightHandFlag = true;
+            SceneManager.LoadScene("Select Task - Right Hand");
         }
 
     }
@@ -292,7 +331,17 @@ public class VisualizeResults : MonoBehaviour
 
     private void returnToTaskSelection()
     {
+        returnToTaskSelectionPopup.SetActive(true);
+    }
+
+    private void AgreedToProceedOnClick()
+    {
         DeleteLastLine();
+    }
+
+    private void DeclineToProceedOnClick()
+    {
+        returnToTaskSelectionPopup.SetActive(false);
     }
 
     private void LockDateFrom(string s)
@@ -574,8 +623,8 @@ public class VisualizeResults : MonoBehaviour
             {
                 using (StreamWriter writer = new StreamWriter(dataSavePath, append: true))
                 {
-                    string header = "Date" + "\t" + "ThumbMCP Extend" + "\t" + "ThumbMCP Flex" + "\t" +
-                        "ThumbIP Extend" + "\t" + "ThumbIP Flex" + "\t" +
+                    string header = "Date" + "\t" + "ThumbMCP Ext" + "\t" + "ThumbMCP Flex" + "\t" +
+                        "ThumbIP Ext" + "\t" + "ThumbIP Flex" + "\t" +
                         "IndexMCP Ext" + "\t" + "IndexMCP Flex" + "\t" + "IndexPIP Ext" + "\t" + "IndexPIP Flex" + "\t" + "IndexDIP Ext" + "\t" + "IndexDIP Flex" + "\t" +
                         "MiddleMCP Ext" + "\t" + "MiddleMCP Flex" + "\t" + "MiddlePIP Ext" + "\t" + "MiddlePIP Flex" + "\t" + "MiddleDIP Ext" + "\t" + "MiddleDIP Flex" + "\t" +
                         "RingMCP Ext" + "\t" + "RingMCP Flex" + "\t" + "RingPIP Ext" + "\t" + "RingPIP Flex" + "\t" + "RingDIP Ext" + "\t" + "RingDIP Flex" + "\t" +
@@ -1285,17 +1334,17 @@ public class VisualizeResults : MonoBehaviour
     {
         string csvFilePath_right = Application.dataPath + "/" + LogIn.PatientID + "_" +
             LogIn.TodaysDate + "_jointROM_right.csv";
-        string dataFilePath_right = Application.dataPath + "/dataFile_right.txt";
+        string dataFilePath_right = Application.dataPath + "/" + LogIn.PatientID + "_dataFile_right.txt";
         string csvFilePath_left = Application.dataPath + "/" + LogIn.PatientID + "_" +
            LogIn.TodaysDate + "_jointROM_left.csv";
-        string dataFilePath_left = Application.dataPath + "/dataFile_left.txt";
+        string dataFilePath_left = Application.dataPath + "/" + LogIn.PatientID + "_dataFile_left.txt";
         SaveCSV(csvFilePath_right, dataFilePath_right);
         SaveCSV(csvFilePath_left, dataFilePath_left);
     }
 
     private void SaveCSV(string csvFilePath, string dataFilePath)
     {
-        if (!File.Exists(filePath))
+        if (!File.Exists(dataFilePath))
         {
             UnityEngine.Debug.Log("Text file not found: " + filePath);
             return;
@@ -1303,7 +1352,7 @@ public class VisualizeResults : MonoBehaviour
 
         try
         {
-            using (StreamReader reader = new StreamReader(filePath))
+            using (StreamReader reader = new StreamReader(dataFilePath))
             using (StreamWriter writer = new StreamWriter(csvFilePath, false))
             {
                 while (!reader.EndOfStream)

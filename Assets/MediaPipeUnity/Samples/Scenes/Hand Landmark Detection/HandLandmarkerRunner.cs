@@ -9,6 +9,7 @@ using System.Diagnostics.Tracing;
 using Mediapipe.Tasks.Vision.HandLandmarker;
 using UnityEngine;
 using UnityEngine.Rendering;
+using static Mediapipe.ImageFormat.Types;
 
 namespace Mediapipe.Unity.Sample.HandLandmarkDetection
 {
@@ -220,6 +221,8 @@ namespace Mediapipe.Unity.Sample.HandLandmarkDetection
                         new Vector3(landmarks.landmarks[6].x, landmarks.landmarks[6].y, landmarks.landmarks[6].z)   // Index PIP
                     );
 
+                    Debug.Log(indexMCPAngle);
+
                     float indexPIPAngle = CalculateJointAngle(
                         new Vector3(landmarks.landmarks[5].x, landmarks.landmarks[5].y, landmarks.landmarks[5].z),  // Index MCP
                         new Vector3(landmarks.landmarks[6].x, landmarks.landmarks[6].y, landmarks.landmarks[6].z),  // Index PIP
@@ -347,9 +350,9 @@ namespace Mediapipe.Unity.Sample.HandLandmarkDetection
         float dotProduct = Vector3.Dot(vector1, vector2);
         float magnitude1 = vector1.magnitude;
         float magnitude2 = vector2.magnitude;
-
+    
         // Calculate the angle in radians and convert to degrees
-        float angleRad = Mathf.Acos(dotProduct / (magnitude1 * magnitude2));
+        float angleRad = Mathf.Acos(Mathf.Clamp(dotProduct / (magnitude1 * magnitude2),-1f,1f));
         float angleDeg = 180-(angleRad * Mathf.Rad2Deg);
 
         return angleDeg;

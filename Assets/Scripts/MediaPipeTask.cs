@@ -275,9 +275,18 @@ public class MediaPipeTask : MonoBehaviour
         PopupWindow.SetActive(false);
         popupFlag = false;
 
-        rawLeapRight.BaseStream.SetLength(0);
-        rawLeapRight.Flush();
-        UnityEngine.Debug.Log("File content deleted successfully!");
+        if (SetUp.rightHandFlag)
+        {
+            rawLeapRight.BaseStream.SetLength(0);
+            rawLeapRight.Flush();
+            UnityEngine.Debug.Log("File content deleted successfully!");
+        }
+        else
+        {
+            rawLeapLeft.BaseStream.SetLength(0);
+            rawLeapLeft.Flush();
+            UnityEngine.Debug.Log("File content deleted successfully!");
+        }
 
         if (task7Flag)
         {
