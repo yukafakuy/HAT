@@ -1,17 +1,22 @@
+using E2C;
+using Leap.Unity.Attributes;
+using LeapInternal;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using E2C;
-using UnityEngine.UI;
-using Unity;
-using TMPro;
+using System.Diagnostics;
 using System.IO;
-using System;
 using System.Linq;
-using UnityEngine.SceneManagement;
+using TMPro;
+using Unity;
+using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.Experimental.RestService;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using static E2C.E2ChartData;
-using Leap.Unity.Attributes;
 
 public class VisualizeResults : MonoBehaviour
 {
@@ -19,21 +24,20 @@ public class VisualizeResults : MonoBehaviour
     public Button ThumbButton, IndexButton, MiddleButton, RingButton, PinkyButton, WristButton;
     public Button RightHand, LeftHand;
     public Button MCPButton, PIPButton, DIPButton;
-    public Toggle BothToggle, PreToggle, PostToggle;
     public Button returnToTaskSelectionButton, SignOutButton, exportToCSVButton;
-    private bool thumbFlag, indexFlag, middleFlag, ringFlag, pinkyFlag, wristFlag = false;
+    public static bool thumbFlag, indexFlag, middleFlag, ringFlag, pinkyFlag, wristFlag = false;
     private List<string> jointList = new List<string>();
     public TMP_Text chartTitle, successText;
-    private int jointNum = 0;
     private GraphState previousState;
+    public TMP_Text patientName, providerName, date;
 
     public static bool returnToTaskSelected = false;
 
     private string filePathRight, filePathLeft, filePath;
 
     // Hand and joint flags
-    private bool rightHandFlag = false;
-    private bool MCPFlag, PIPFlag, DIPFlag = false;
+    public static bool rightHandFlag = false;
+    public static bool MCPFlag, PIPFlag, DIPFlag = false;
 
     //Date Range selector
     public TMP_InputField DateFromField, DateToField;
@@ -52,7 +56,7 @@ public class VisualizeResults : MonoBehaviour
         imagePinkyPIP_left, imagePinkyDIP_left, imageWrist_left;
 
     //Exporting stuff
-    public Toggle GraphToggle, TableToggle, NotesToggle;
+    public Toggle GraphToggle, TableToggle;
     public TMP_Dropdown FormatDropdown;
 
     //Comments section
@@ -67,16 +71,14 @@ public class VisualizeResults : MonoBehaviour
 
     public TMP_Text JointDescription;
 
+    //CSV to PDF conversion
+    private string sofficePath = @"C:\Program Files\LibreOffice\program\soffice.exe";
+    private string ghostscriptPath = @"C:\Program Files\gs\gs10.05.1\bin\gswin64.exe";
+
     // Start is called before the first frame update
     void Start()
     {
-        //for now (update later)
-        GraphToggle.interactable = false;
-        NotesToggle.interactable = false;
-        BothToggle.interactable = false;
-        PreToggle.interactable = false;
-        PostToggle.interactable = false;
-
+        successText.text = "";
         DateFromField.onValueChanged.AddListener(LockDateFrom);
         DateToField.onValueChanged.AddListener(LockDateTo);
 
@@ -84,6 +86,10 @@ public class VisualizeResults : MonoBehaviour
         {
             LogIn.TodaysDate = DateTime.Now.ToString("yyyy-MM-dd");
         }
+
+        patientName.text = LogIn.PatientID;
+        providerName.text = LogIn.ProvidersName;
+        date.text = LogIn.TodaysDate;
 
         notesPath = Application.dataPath + "/" + LogIn.PatientID + "_notes.csv";
         if (File.Exists(notesPath))
@@ -124,6 +130,7 @@ public class VisualizeResults : MonoBehaviour
         AddNotesButton.onClick.AddListener(AddNotes);
         AgreedToProceedButton.onClick.AddListener(AgreedToProceedOnClick);
         DeclinedToProceedButton.onClick.AddListener(DeclineToProceedOnClick);
+        FormatDropdown.onValueChanged.AddListener(OnDropdownValueChanged);
 
         //add chart options
         myChart.chartOptions = myChart.gameObject.AddComponent<E2ChartOptions>();
@@ -232,6 +239,9 @@ public class VisualizeResults : MonoBehaviour
 
     private void signOut()
     {
+        LogIn.PatientID = "";
+        LogIn.ProvidersName = "";
+        LogIn.TodaysDate = "";
         SceneManager.LoadScene(0);
     }
 
@@ -271,7 +281,7 @@ public class VisualizeResults : MonoBehaviour
         {
             if (!File.Exists(path1))
             {
-                Debug.LogError("File not found: " + path1);
+                UnityEngine.Debug.LogError("File not found: " + path1);
                 return;
             }
 
@@ -291,7 +301,7 @@ public class VisualizeResults : MonoBehaviour
         {
             if (!File.Exists(path1))
             {
-                Debug.LogError("File not found: " + path1);
+                UnityEngine.Debug.LogError("File not found: " + path1);
                 return;
             }
             else
@@ -310,7 +320,7 @@ public class VisualizeResults : MonoBehaviour
 
             if (!File.Exists(path2))
             {
-                Debug.LogError("File not found: " + path2);
+                UnityEngine.Debug.LogError("File not found: " + path2);
                 return;
             }
             else
@@ -507,8 +517,8 @@ public class VisualizeResults : MonoBehaviour
                     minValue = MathF.Round(minValue);
                     dataExtracted[24] = minValue.ToString();
 
-                    dataExtracted[31] = SetUp.preTherapyFlag.ToString();
-                    dataExtracted[32] = SetUp.webcamFlag.ToString();
+                    dataExtracted[31] = columnArrays[15].ToString();
+                    dataExtracted[32] = columnArrays[16].ToString();
 
                     File.Delete(path_new);
                 }
@@ -629,7 +639,7 @@ public class VisualizeResults : MonoBehaviour
                         "MiddleMCP Ext" + "\t" + "MiddleMCP Flex" + "\t" + "MiddlePIP Ext" + "\t" + "MiddlePIP Flex" + "\t" + "MiddleDIP Ext" + "\t" + "MiddleDIP Flex" + "\t" +
                         "RingMCP Ext" + "\t" + "RingMCP Flex" + "\t" + "RingPIP Ext" + "\t" + "RingPIP Flex" + "\t" + "RingDIP Ext" + "\t" + "RingDIP Flex" + "\t" +
                         "LittleMCP Ext" + "\t" + "LittleMCP Flex" + "\t" + "LittlePIP Ext" + "\t" + "LittlePIP Flex" + "\t" + "LittleDIP Ext" + "\t" + "LittleDIP Flex" + "\t" +
-                        "Wrist Ext" + "\t" + "Wrist Flex" + "\t" + "Pre Therapy Flag" + "\t" + "Webcam Flag";
+                        "Wrist Ext" + "\t" + "Wrist Flex" + "\t" + "Webcam Flag" + "\t" + "Provider";
 
                     writer.WriteLine(header);
                     writer.WriteLine(lineWrite);
@@ -638,7 +648,7 @@ public class VisualizeResults : MonoBehaviour
         }
        
     }
-    private void updateGraph()
+    public void updateGraph()
     {
         GraphState currentState = new GraphState
         {
@@ -1330,63 +1340,61 @@ public class VisualizeResults : MonoBehaviour
             }
         }
     }
+
+    private void OnDropdownValueChanged(int index)
+    {
+        string selectedOption = FormatDropdown.options[index].text;
+    }
     private void ExportToCSV()
     {
-        string csvFilePath_right = Application.dataPath + "/" + LogIn.PatientID + "_" +
+        //CSV of the table values
+        if (TableToggle.isOn)
+        {
+            string csvFilePath_right = Application.dataPath + "/" + LogIn.PatientID + "_" +
             LogIn.TodaysDate + "_jointROM_right.csv";
-        string dataFilePath_right = Application.dataPath + "/" + LogIn.PatientID + "_dataFile_right.txt";
-        string csvFilePath_left = Application.dataPath + "/" + LogIn.PatientID + "_" +
-           LogIn.TodaysDate + "_jointROM_left.csv";
-        string dataFilePath_left = Application.dataPath + "/" + LogIn.PatientID + "_dataFile_left.txt";
-        SaveCSV(csvFilePath_right, dataFilePath_right);
-        SaveCSV(csvFilePath_left, dataFilePath_left);
-    }
+            string dataFilePath_right = Application.dataPath + "/" + LogIn.PatientID + "_dataFile_right.txt";
+            string csvFilePath_left = Application.dataPath + "/" + LogIn.PatientID + "_" +
+               LogIn.TodaysDate + "_jointROM_left.csv";
+            string dataFilePath_left = Application.dataPath + "/" + LogIn.PatientID + "_dataFile_left.txt";
+            Functions.SaveCSV(csvFilePath_right, dataFilePath_right);
+            Functions.SaveCSV(csvFilePath_left, dataFilePath_left);
 
-    private void SaveCSV(string csvFilePath, string dataFilePath)
+            StartCoroutine(WaitAndCheckFile(csvFilePath_left));
+        }
+        //pdf of the plot
+        else if (GraphToggle.isOn)
+        {
+            CoroutineRunner.Instance.StartCoroutine(ImportImages.CaptureAllImagesCoroutine());
+
+            string pdfFile = Directory.GetCurrentDirectory() + "/Assets/" + LogIn.PatientID + "_" + LogIn.TodaysDate + "_data.pdf";
+            StartCoroutine(WaitAndCheckFile(pdfFile));
+        }
+    }
+    IEnumerator WaitAndCheckFile(string filePath)
     {
-        if (!File.Exists(dataFilePath))
+        yield return new WaitForSeconds(3f); // Wait 5 seconds
+
+        if (File.Exists(filePath))
         {
-            UnityEngine.Debug.Log("Text file not found: " + filePath);
-            return;
+            successText.text = "Export was successful!";
+            successText.color = Color.green;
+        }
+        else
+        {
+            successText.text = "Export was not successful!";
+            successText.color = Color.red;
         }
 
-        try
-        {
-            using (StreamReader reader = new StreamReader(dataFilePath))
-            using (StreamWriter writer = new StreamWriter(csvFilePath, false))
-            {
-                while (!reader.EndOfStream)
-                {
-                    string line = reader.ReadLine();
-                    string[] values = line.Split(new[] { ',', '\t' });
-                    writer.WriteLine(string.Join("\t", values));
-                }
-            }
-            UnityEngine.Debug.Log("Export successful! CSV saved at: " + csvFilePath);
-            successText.text = "Success!";
-            successText.color = new Color(4f / 255f, 173f / 255f, 0f / 255f);
-            successText.enabled = true;
-        }
-
-        catch (IOException e)
-        {
-            UnityEngine.Debug.Log("File operation failed: " + e.Message);
-            successText.text = "Export Failed.";
-            successText.color = new Color(197f / 255f, 61f / 255f, 61f / 255f);
-            successText.enabled = true;
-        }
-
-        StartCoroutine(WaitAndExecute());
+        StartCoroutine(HideTextAfterDelay(2f)); // Hide after 2 more seconds
     }
 
-    IEnumerator WaitAndExecute()
+    IEnumerator HideTextAfterDelay(float delay)
     {
-        yield return new WaitForSeconds(2f);
-
-        successText.enabled = false;    
+        yield return new WaitForSeconds(delay);
+        successText.text = "";
     }
 
-    private struct GraphState
+    public struct GraphState
     {
         public bool thumbFlag, indexFlag, middleFlag, ringFlag, pinkyFlag, wristFlag;
         public bool MCPFlag, PIPFlag, DIPFlag;
@@ -1417,13 +1425,26 @@ public class VisualizeResults : MonoBehaviour
     private void AddNotes()
     {
         string notesText = LogIn.TodaysDate + "\t" + NotesInput.text;
-        notesPath = Application.dataPath + "/" + LogIn.PatientID + "_notes.csv";
+        notesPath = Directory.GetCurrentDirectory() + "/Assets/" + LogIn.PatientID + "_notes.csv";
 
         if (!string.IsNullOrEmpty(notesText))
         {
             File.AppendAllText(notesPath, notesText + "\n");
-            Debug.Log("Saved: " + notesText);
+            UnityEngine.Debug.Log("Saved: " + notesText);
             NotesInput.text = ""; // clear after saving
+        }
+    }
+
+    //My own Toggle Group function
+    private void ToggleGroup()
+    {
+        if (GraphToggle.isOn)
+        {
+            TableToggle.isOn = false;
+        }
+        else if (TableToggle.isOn)
+        {
+            GraphToggle.isOn = false;
         }
     }
 
@@ -1433,6 +1454,7 @@ public class VisualizeResults : MonoBehaviour
         changeDateRange();
         updateChartTitle();
         updateGraph();
+        ToggleGroup();
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {

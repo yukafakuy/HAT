@@ -15,8 +15,8 @@ using Unity.VisualScripting;
 public class SetUp : MonoBehaviour
 {
     public TMP_Text patientID, providersName, todaysDate;
-    public Toggle RightHand, LeftHand, BothHands, PreTherapy, PostTherapy, Webcam, LeapController;
-    public static bool rightHandFlag, bothHandFlag, bothHandFlagAbsolute, preTherapyFlag, webcamFlag = false;
+    public Toggle RightHand, LeftHand, BothHands, Webcam, LeapController;
+    public static bool rightHandFlag, bothHandFlag, bothHandFlagAbsolute, webcamFlag = false;
 
     public Button NextButton, PastResults, SignOut;
 
@@ -45,6 +45,9 @@ public class SetUp : MonoBehaviour
 
     void SignOutOnClick()
     {
+        LogIn.PatientID = "";
+        LogIn.ProvidersName = "";
+        LogIn.TodaysDate = "";
         SceneManager.LoadScene(0);
     }
 
@@ -55,7 +58,6 @@ public class SetUp : MonoBehaviour
     void NextButtonOnClick()
     {
         // Set flags based on UI toggles
-        preTherapyFlag = PreTherapy.isOn;
         webcamFlag = Webcam.isOn;
 
         // Check Leap connection if LeapController is selected

@@ -56,7 +56,7 @@ public class MediaPipeTask : MonoBehaviour
     public Button SkipButton, ProceedButton;
 
     //task list
-    private bool task1Flag, task2Flag, task3Flag, task4Flag, task5Flag, task6Flag, task7Flag = false;
+    public static bool task1Flag, task2Flag, task3Flag, task4Flag, task5Flag, task6Flag, task7Flag = false;
     private string taskText;
     private string[] taskNames = { "Finger Extension", "MCP Flexion", "PIP/DIP Extension", "Thumb Out", "Thumb In", "Wrist Flexion/Extension" };
     private string lineText;
@@ -351,6 +351,9 @@ public class MediaPipeTask : MonoBehaviour
 
     void SignOutOnClick()
     {
+        LogIn.PatientID = "";
+        LogIn.ProvidersName = "";
+        LogIn.TodaysDate = "";
         SceneManager.LoadScene(0);
     }
 
@@ -462,18 +465,15 @@ public class MediaPipeTask : MonoBehaviour
                 //wrist
                 float wrist_flex = _handLandmarkerRunner.handJoints[14];
 
-                //Vector3 palm_normal = rightHand.PalmNormal;
-                //Vector3 palm_direction = rightHand.Direction;
-                //float wrist_flex = (float)(Math.Atan2(palm_direction.x, palm_direction.z) * 180 / Math.PI);
-
                 rawDataRight = thumb_MCP + "\t" + thumb_IP + "\t" +
                     index_MCP + "\t" + index_PIP + "\t" + index_DIP + "\t" +
                     middle_MCP + "\t" + middle_PIP + "\t" + middle_DIP + "\t" +
                     ring_MCP + "\t" + ring_PIP + "\t" + ring_DIP + "\t" +
                     pinky_MCP + "\t" + pinky_PIP + "\t" + pinky_DIP + "\t" + wrist_flex +
-                    "\t" + SetUp.preTherapyFlag.ToString() + "\t" + SetUp.webcamFlag.ToString();
+                    "\t" + SetUp.webcamFlag.ToString() + "\t" + LogIn.ProvidersName;
 
-                //UnityEngine.Debug.Log(index_PIP);
+                //UnityEngine.Debug.Log(index_DIP + "\t" + middle_DIP + "\t" +
+                //    ring_DIP + "\t" + pinky_DIP);
 
                 rawLeapRight.WriteLine(rawDataRight);
             }
@@ -521,7 +521,7 @@ public class MediaPipeTask : MonoBehaviour
                     middle_MCP + "\t" + middle_PIP + "\t" + middle_DIP + "\t" +
                     ring_MCP + "\t" + ring_PIP + "\t" + ring_DIP + "\t" +
                     pinky_MCP + "\t" + pinky_PIP + "\t" + pinky_DIP + "\t" + wrist_flex +
-                    "\t" + SetUp.preTherapyFlag + "\t" + SetUp.webcamFlag;
+                    "\t" + SetUp.webcamFlag.ToString() + "\t" + LogIn.ProvidersName;
 
 
                 rawLeapLeft.WriteLine(rawDataLeft);
