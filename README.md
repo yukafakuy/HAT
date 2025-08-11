@@ -8,10 +8,9 @@ H.A.T. is an open-source, camera-based hand assessment tool that allows clinicia
 - [Features](#features)  
 - [Getting Started](#getting-started)  
 - [Instructions for Use](#instructions-for-use)  
-- [Architecture](#architecture)  
-- [Technologies](#technologies)  
-- [Contributing](#contributing)  
-- [License](#license)  
+- [Notes](#notes)  
+- [Acknowledgements](#acknowledgments)  
+- [Questions](#questions?)  
 
 ---
 
