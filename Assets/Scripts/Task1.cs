@@ -358,6 +358,9 @@ public class Task1 : MonoBehaviour
 
     void SignOutOnClick()
     {
+        LogIn.PatientID = "";
+        LogIn.ProvidersName = "";
+        LogIn.TodaysDate = "";
         SceneManager.LoadScene(0);
     }
 
@@ -510,22 +513,26 @@ public class Task1 : MonoBehaviour
                 //index
                 float index_MCP = getAnglesZ(RindexMCP);
                 float index_PIP = getAnglesZ(RindexPIP);
-                float index_DIP = getAnglesZ(RindexDIP);
+                //float index_DIP = getAnglesZ(RindexDIP);
+                float index_DIP = GetRobustDIPAngle(index_PIP);
 
                 //middle
                 float middle_MCP = getAnglesZ(RmiddleMCP);
                 float middle_PIP = getAnglesZ(RmiddlePIP);
-                float middle_DIP = getAnglesZ(RmiddleDIP);
+                //float middle_DIP = getAnglesZ(RmiddleDIP);
+                float middle_DIP = GetRobustDIPAngle(middle_PIP);
 
                 //ring
                 float ring_MCP = getAnglesZ(RringMCP);
                 float ring_PIP = getAnglesZ(RringPIP);
-                float ring_DIP = getAnglesZ(RringDIP);
+                //float ring_DIP = getAnglesZ(RringDIP);
+                float ring_DIP = GetRobustDIPAngle(ring_PIP);
 
                 //pinky
                 float pinky_MCP = getAnglesZ(RpinkyMCP);
                 float pinky_PIP = getAnglesZ(RpinkyPIP);
-                float pinky_DIP = getAnglesZ(RpinkyDIP);
+                //float pinky_DIP = getAnglesZ(RpinkyDIP);
+                float pinky_DIP = GetRobustDIPAngle(pinky_PIP);
 
                 //wrist
                 float wrist_flex = getAnglesZ(Rwrist);
@@ -538,9 +545,12 @@ public class Task1 : MonoBehaviour
                     middle_MCP + "\t" + middle_PIP + "\t" + middle_DIP + "\t" +
                     ring_MCP + "\t" + ring_PIP + "\t" + ring_DIP + "\t" +
                     pinky_MCP + "\t" + pinky_PIP + "\t" + pinky_DIP + "\t" + wrist_flex +
-                    "\t" + SetUp.preTherapyFlag + "\t" + SetUp.webcamFlag;
+                    "\t" + SetUp.webcamFlag.ToString() +"\t" + LogIn.ProvidersName;
 
-                //UnityEngine.Debug.Log(index_PIP);
+                UnityEngine.Debug.Log("index: " + index_PIP + "\t" + index_DIP + "\t" +
+                    "middle: " + middle_PIP + "\t" + middle_DIP + "\t" +
+                    "ring: " + ring_PIP + "\t" + ring_DIP + "\t" +
+                    "pinky: " + pinky_PIP + "\t" + pinky_DIP);
 
                 rawLeapRight.WriteLine(rawDataRight);
             }
@@ -556,22 +566,26 @@ public class Task1 : MonoBehaviour
                 //index
                 float index_MCP = getAnglesZ(LindexMCP);
                 float index_PIP = getAnglesZ(LindexPIP);
-                float index_DIP = getAnglesZ(LindexDIP);
+                //float index_DIP = getAnglesZ(LindexDIP);
+                float index_DIP = GetRobustDIPAngle(index_PIP);
 
                 //middle
                 float middle_MCP = getAnglesZ(LmiddleMCP);
                 float middle_PIP = getAnglesZ(LmiddlePIP);
-                float middle_DIP = getAnglesZ(LmiddleDIP);
+                //float middle_DIP = getAnglesZ(LmiddleDIP);
+                float middle_DIP = GetRobustDIPAngle(middle_PIP);
 
                 //ring
                 float ring_MCP = getAnglesZ(LringMCP);
                 float ring_PIP = getAnglesZ(LringPIP);
-                float ring_DIP = getAnglesZ(LringDIP);
+                //float ring_DIP = getAnglesZ(LringDIP);
+                float ring_DIP = GetRobustDIPAngle(ring_PIP);
 
                 //pinky
                 float pinky_MCP = getAnglesZ(LpinkyMCP);
                 float pinky_PIP = getAnglesZ(LpinkyPIP);
-                float pinky_DIP = getAnglesZ(LpinkyDIP);
+                //float pinky_DIP = getAnglesZ(LpinkyDIP);
+                float pinky_DIP = GetRobustDIPAngle(pinky_PIP);
 
                 //wrist
                 float wrist_flex = getAnglesZ(Lwrist);
@@ -584,7 +598,7 @@ public class Task1 : MonoBehaviour
                     middle_MCP + "\t" + middle_PIP + "\t" + middle_DIP + "\t" +
                     ring_MCP + "\t" + ring_PIP + "\t" + ring_DIP + "\t" +
                     pinky_MCP + "\t" + pinky_PIP + "\t" + pinky_DIP + "\t" + wrist_flex +
-                    "\t" + SetUp.preTherapyFlag.ToString() + "\t" + SetUp.webcamFlag.ToString();
+                    "\t" + SetUp.webcamFlag.ToString() + "\t" + LogIn.ProvidersName;
 
                 //UnityEngine.Debug.Log(index_PIP);
 
@@ -599,6 +613,39 @@ public class Task1 : MonoBehaviour
         inactivityTimer = 0f;
     }
 
+    private float GetRobustDIPAngle(float pipAngle)
+    {
+        float estimatedDIP;
+        if (task3Flag)
+        {
+            estimatedDIP = EstimateDIPFromPIP(pipAngle);
+        }
+        else
+        {
+            estimatedDIP = pipAngle;
+        }
+
+        // Blend based on confidence
+        return estimatedDIP;
+    }
+
+    // Apply anatomical constraints to DIP joint estimation
+    private float EstimateDIPFromPIP(float pipAngle)
+    {
+        // DIP typically moves 60-80% of PIP angle
+        float dipRatio = 0.7f;
+
+        // Anatomical limits: DIP typically 0-90° flexion
+        float estimatedDIP = Mathf.Clamp(pipAngle * dipRatio, -90f, 30f);
+
+        // Apply coupling constraint (DIP can't extend much when PIP is flexed)
+        if (pipAngle < -60f)
+        {
+            estimatedDIP = Mathf.Max(estimatedDIP, pipAngle - 30f);
+        }
+
+        return estimatedDIP;
+    }
 
     // Update is called once per frame
     void Update()

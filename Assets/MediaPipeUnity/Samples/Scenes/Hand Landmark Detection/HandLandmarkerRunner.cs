@@ -4,9 +4,11 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
+using Leap;
+using Mediapipe.Tasks.Vision.HandLandmarker;
 using System.Collections;
 using System.Diagnostics.Tracing;
-using Mediapipe.Tasks.Vision.HandLandmarker;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.Rendering;
 using static Mediapipe.ImageFormat.Types;
@@ -157,30 +159,23 @@ namespace Mediapipe.Unity.Sample.HandLandmarkDetection
       }
     }
 
-    private void OnHandLandmarkDetectionOutput(HandLandmarkerResult result, Image image, long timestamp)
-    {
-      _handLandmarkerResultAnnotationController.DrawLater(result);
+        private void OnHandLandmarkDetectionOutput(HandLandmarkerResult result, Image image, long timestamp)
+        {
+            _handLandmarkerResultAnnotationController.DrawLater(result);
 
             if (result.handLandmarks != null && result.handLandmarks.Count > 0)
             {
                 for (int i = 0; i < result.handLandmarks.Count; i++)
                 {
-                    // ✅ Get handedness for the same hand index
+                    // Get handedness (your existing code)
                     if (result.handedness != null && i < result.handedness.Count)
                     {
                         var handedness = result.handedness[i];
                         handLabel = null;
                         if (handedness.categories != null && handedness.categories.Count > 0)
                         {
-                            string label = handedness.categories[0].categoryName; // "Left" or "Right"
-                            if (label == "Left")
-                            {
-                                handLabel = "Right";
-                            }
-                            else if (label == "Right")
-                            {
-                                handLabel = "Left";
-                            }
+                            string label = handedness.categories[0].categoryName;
+                            handLabel = (label == "Left") ? "Right" : "Left";
                         }
                     }
                     else
@@ -188,174 +183,253 @@ namespace Mediapipe.Unity.Sample.HandLandmarkDetection
                         handLabel = null;
                     }
 
-
-                    //Debug.Log($"Hand {i + 1} Landmarks:");
                     handJoints = new float[15];
-
                     var landmarks = result.handLandmarks[i];
-                    for (int j = 0; j < landmarks.landmarks.Count; j++)
-                    {
-                        var landmark = landmarks.landmarks[j];
-                        Vector3 jointPosition = new Vector3(landmark.x, landmark.y, landmark.z);
-                        //Debug.Log($"Landmark {j}: (x: {landmark.x}, y: {landmark.y}, z: {landmark.z})");
-                    }
 
-                    float thumbMCPAngle = CalculateJointAngle(
-                        new Vector3(landmarks.landmarks[1].x, landmarks.landmarks[1].y, landmarks.landmarks[1].z),  // Index MCP
-                        new Vector3(landmarks.landmarks[2].x, landmarks.landmarks[2].y, landmarks.landmarks[2].z),  // Index PIP
-                        new Vector3(landmarks.landmarks[3].x, landmarks.landmarks[3].y, landmarks.landmarks[3].z)   // Index PIP
+                    // Calculate hand normal for consistent orientation
+                    Vector3 wrist = new Vector3(landmarks.landmarks[0].x, landmarks.landmarks[0].y, landmarks.landmarks[0].z);
+                    Vector3 indexMCP = new Vector3(landmarks.landmarks[5].x, landmarks.landmarks[5].y, landmarks.landmarks[5].z);
+                    Vector3 pinkyMCP = new Vector3(landmarks.landmarks[17].x, landmarks.landmarks[17].y, landmarks.landmarks[17].z);
+                    Vector3 handNormal = Vector3.Cross(indexMCP - wrist, pinkyMCP - wrist).normalized;
+
+                    // Thumb angles
+                    float thumbMCPAngle = CalculateFingerJointAngle(
+                        new Vector3(landmarks.landmarks[1].x, landmarks.landmarks[1].y, landmarks.landmarks[1].z),
+                        new Vector3(landmarks.landmarks[2].x, landmarks.landmarks[2].y, landmarks.landmarks[2].z),
+                        new Vector3(landmarks.landmarks[3].x, landmarks.landmarks[3].y, landmarks.landmarks[3].z),
+                        handNormal
                     );
 
-                    float thumbIPAngle = CalculateJointAngle(
-                        new Vector3(landmarks.landmarks[2].x, landmarks.landmarks[2].y, landmarks.landmarks[2].z),  // Index MCP
-                        new Vector3(landmarks.landmarks[3].x, landmarks.landmarks[3].y, landmarks.landmarks[3].z),  // Index PIP
-                        new Vector3(landmarks.landmarks[4].x, landmarks.landmarks[4].y, landmarks.landmarks[4].z)   // Index PIP
+                    float thumbIPAngle = CalculateFingerJointAngle(
+                        new Vector3(landmarks.landmarks[2].x, landmarks.landmarks[2].y, landmarks.landmarks[2].z),
+                        new Vector3(landmarks.landmarks[3].x, landmarks.landmarks[3].y, landmarks.landmarks[3].z),
+                        new Vector3(landmarks.landmarks[4].x, landmarks.landmarks[4].y, landmarks.landmarks[4].z),
+                        handNormal
                     );
 
                     handJoints[0] = thumbMCPAngle;
                     handJoints[1] = thumbIPAngle;
 
-                    float indexMCPAngle = CalculateJointAngle(
-                        new Vector3(landmarks.landmarks[0].x, landmarks.landmarks[0].y, landmarks.landmarks[0].z),  // Index MCP
-                        new Vector3(landmarks.landmarks[5].x, landmarks.landmarks[5].y, landmarks.landmarks[5].z),  // Index PIP
-                        new Vector3(landmarks.landmarks[6].x, landmarks.landmarks[6].y, landmarks.landmarks[6].z)   // Index PIP
+                    // Index finger angles
+                    float indexMCPAngle = CalculateFingerJointAngle(wrist, indexMCP,
+                        new Vector3(landmarks.landmarks[6].x, landmarks.landmarks[6].y, landmarks.landmarks[6].z),
+                        handNormal
                     );
 
-                    Debug.Log(indexMCPAngle);
-
-                    float indexPIPAngle = CalculateJointAngle(
-                        new Vector3(landmarks.landmarks[5].x, landmarks.landmarks[5].y, landmarks.landmarks[5].z),  // Index MCP
-                        new Vector3(landmarks.landmarks[6].x, landmarks.landmarks[6].y, landmarks.landmarks[6].z),  // Index PIP
-                        new Vector3(landmarks.landmarks[7].x, landmarks.landmarks[7].y, landmarks.landmarks[7].z)   // Index PIP
+                    float indexPIPAngle = CalculateFingerJointAngle(
+                        indexMCP,
+                        new Vector3(landmarks.landmarks[6].x, landmarks.landmarks[6].y, landmarks.landmarks[6].z),
+                        new Vector3(landmarks.landmarks[7].x, landmarks.landmarks[7].y, landmarks.landmarks[7].z),
+                        handNormal
                     );
 
-                    float indexDIPAngle = CalculateJointAngle(
-                        new Vector3(landmarks.landmarks[6].x, landmarks.landmarks[6].y, landmarks.landmarks[6].z),  // Index MCP
-                        new Vector3(landmarks.landmarks[7].x, landmarks.landmarks[7].y, landmarks.landmarks[7].z),  // Index PIP
-                        new Vector3(landmarks.landmarks[8].x, landmarks.landmarks[8].y, landmarks.landmarks[8].z)   // Index PIP
-                    );
+                    float indexDIPAngle = CalculateFingerJointAngle(
+                        new Vector3(landmarks.landmarks[6].x, landmarks.landmarks[6].y, landmarks.landmarks[6].z),
+                        new Vector3(landmarks.landmarks[7].x, landmarks.landmarks[7].y, landmarks.landmarks[7].z),
+                        new Vector3(landmarks.landmarks[8].x, landmarks.landmarks[8].y, landmarks.landmarks[8].z),
+                        handNormal
+                    );        
 
                     handJoints[2] = indexMCPAngle;
                     handJoints[3] = indexPIPAngle;
-                    handJoints[4] = indexDIPAngle;
+                    //handJoints[4] = indexDIPAngle;
+                    handJoints[4] = GetRobustDIPAngle(indexDIPAngle);
 
-                    float middleMCPAngle = CalculateJointAngle(
-                        new Vector3(landmarks.landmarks[0].x, landmarks.landmarks[0].y, landmarks.landmarks[0].z),  // middle MCP
-                        new Vector3(landmarks.landmarks[9].x, landmarks.landmarks[9].y, landmarks.landmarks[9].z),  // middle PIP
-                        new Vector3(landmarks.landmarks[10].x, landmarks.landmarks[10].y, landmarks.landmarks[10].z)   // middle PIP
+                    // Middle finger angles
+                    Vector3 middleMCP = new Vector3(landmarks.landmarks[9].x, landmarks.landmarks[9].y, landmarks.landmarks[9].z);
+
+                    float middleMCPAngle = CalculateFingerJointAngle(
+                        wrist,
+                        middleMCP,
+                        new Vector3(landmarks.landmarks[10].x, landmarks.landmarks[10].y, landmarks.landmarks[10].z),
+                        handNormal
                     );
 
-                    float middlePIPAngle = CalculateJointAngle(
-                        new Vector3(landmarks.landmarks[9].x, landmarks.landmarks[9].y, landmarks.landmarks[9].z),  // middle MCP
-                        new Vector3(landmarks.landmarks[10].x, landmarks.landmarks[10].y, landmarks.landmarks[10].z),  // middle PIP
-                        new Vector3(landmarks.landmarks[11].x, landmarks.landmarks[11].y, landmarks.landmarks[11].z)   // middle PIP
+                    float middlePIPAngle = CalculateFingerJointAngle(
+                        middleMCP,
+                        new Vector3(landmarks.landmarks[10].x, landmarks.landmarks[10].y, landmarks.landmarks[10].z),
+                        new Vector3(landmarks.landmarks[11].x, landmarks.landmarks[11].y, landmarks.landmarks[11].z),
+                        handNormal
                     );
 
-                    float middleDIPAngle = CalculateJointAngle(
-                        new Vector3(landmarks.landmarks[10].x, landmarks.landmarks[10].y, landmarks.landmarks[10].z),  // middle MCP
-                        new Vector3(landmarks.landmarks[11].x, landmarks.landmarks[11].y, landmarks.landmarks[11].z),  // middle PIP
-                        new Vector3(landmarks.landmarks[12].x, landmarks.landmarks[12].y, landmarks.landmarks[12].z)   // middle PIP
+                    float middleDIPAngle = CalculateFingerJointAngle(
+                        new Vector3(landmarks.landmarks[10].x, landmarks.landmarks[10].y, landmarks.landmarks[10].z),
+                        new Vector3(landmarks.landmarks[11].x, landmarks.landmarks[11].y, landmarks.landmarks[11].z),
+                        new Vector3(landmarks.landmarks[12].x, landmarks.landmarks[12].y, landmarks.landmarks[12].z),
+                        handNormal
                     );
 
                     handJoints[5] = middleMCPAngle;
                     handJoints[6] = middlePIPAngle;
-                    handJoints[7] = middleDIPAngle;
+                    //handJoints[7] = middleDIPAngle;
+                    handJoints[7] = GetRobustDIPAngle(middleDIPAngle);
 
-                    float ringMCPAngle = CalculateJointAngle(
-                        new Vector3(landmarks.landmarks[0].x, landmarks.landmarks[0].y, landmarks.landmarks[0].z),  // ring MCP
-                        new Vector3(landmarks.landmarks[13].x, landmarks.landmarks[13].y, landmarks.landmarks[13].z),  // ring PIP
-                        new Vector3(landmarks.landmarks[14].x, landmarks.landmarks[14].y, landmarks.landmarks[14].z)   // ring PIP
+                    // Ring finger angles
+                    Vector3 ringMCP = new Vector3(landmarks.landmarks[13].x, landmarks.landmarks[13].y, landmarks.landmarks[13].z);
+
+                    float ringMCPAngle = CalculateFingerJointAngle(
+                        wrist,
+                        ringMCP,
+                        new Vector3(landmarks.landmarks[14].x, landmarks.landmarks[14].y, landmarks.landmarks[14].z),
+                        handNormal
                     );
 
-                    float ringPIPAngle = CalculateJointAngle(
-                        new Vector3(landmarks.landmarks[13].x, landmarks.landmarks[13].y, landmarks.landmarks[13].z),  // ring MCP
-                        new Vector3(landmarks.landmarks[14].x, landmarks.landmarks[14].y, landmarks.landmarks[14].z),  // ring PIP
-                        new Vector3(landmarks.landmarks[15].x, landmarks.landmarks[15].y, landmarks.landmarks[15].z)   // ring PIP
+                    float ringPIPAngle = CalculateFingerJointAngle(
+                        ringMCP,
+                        new Vector3(landmarks.landmarks[14].x, landmarks.landmarks[14].y, landmarks.landmarks[14].z),
+                        new Vector3(landmarks.landmarks[15].x, landmarks.landmarks[15].y, landmarks.landmarks[15].z),
+                        handNormal
                     );
 
-                    float ringDIPAngle = CalculateJointAngle(
-                        new Vector3(landmarks.landmarks[14].x, landmarks.landmarks[14].y, landmarks.landmarks[14].z),  // ring MCP
-                        new Vector3(landmarks.landmarks[15].x, landmarks.landmarks[15].y, landmarks.landmarks[15].z),  // ring PIP
-                        new Vector3(landmarks.landmarks[16].x, landmarks.landmarks[16].y, landmarks.landmarks[16].z)   // ring PIP
+                    float ringDIPAngle = CalculateFingerJointAngle(
+                        new Vector3(landmarks.landmarks[14].x, landmarks.landmarks[14].y, landmarks.landmarks[14].z),
+                        new Vector3(landmarks.landmarks[15].x, landmarks.landmarks[15].y, landmarks.landmarks[15].z),
+                        new Vector3(landmarks.landmarks[16].x, landmarks.landmarks[16].y, landmarks.landmarks[16].z),
+                        handNormal
                     );
 
                     handJoints[8] = ringMCPAngle;
                     handJoints[9] = ringPIPAngle;
-                    handJoints[10] = ringDIPAngle;
+                    //handJoints[10] = ringDIPAngle;
+                    handJoints[10] = GetRobustDIPAngle(ringDIPAngle);
 
-                    float pinkyMCPAngle = CalculateJointAngle(
-                        new Vector3(landmarks.landmarks[0].x, landmarks.landmarks[0].y, landmarks.landmarks[0].z),  // pinky MCP
-                        new Vector3(landmarks.landmarks[17].x, landmarks.landmarks[17].y, landmarks.landmarks[17].z),  // pinky PIP
-                        new Vector3(landmarks.landmarks[18].x, landmarks.landmarks[18].y, landmarks.landmarks[18].z)   // pinky PIP
+
+                    // Pinky finger angles
+                    float pinkyMCPAngle = CalculateFingerJointAngle(
+                        wrist,
+                        pinkyMCP,
+                        new Vector3(landmarks.landmarks[18].x, landmarks.landmarks[18].y, landmarks.landmarks[18].z),
+                        handNormal
                     );
 
-                    float pinkyPIPAngle = CalculateJointAngle(
-                        new Vector3(landmarks.landmarks[17].x, landmarks.landmarks[17].y, landmarks.landmarks[17].z),  // pinky MCP
-                        new Vector3(landmarks.landmarks[18].x, landmarks.landmarks[18].y, landmarks.landmarks[18].z),  // pinky PIP
-                        new Vector3(landmarks.landmarks[19].x, landmarks.landmarks[19].y, landmarks.landmarks[19].z)   // pinky PIP
+                    float pinkyPIPAngle = CalculateFingerJointAngle(
+                        pinkyMCP,
+                        new Vector3(landmarks.landmarks[18].x, landmarks.landmarks[18].y, landmarks.landmarks[18].z),
+                        new Vector3(landmarks.landmarks[19].x, landmarks.landmarks[19].y, landmarks.landmarks[19].z),
+                        handNormal
                     );
 
-                    float pinkyDIPAngle = CalculateJointAngle(
-                        new Vector3(landmarks.landmarks[18].x, landmarks.landmarks[18].y, landmarks.landmarks[18].z),  // pinky MCP
-                        new Vector3(landmarks.landmarks[19].x, landmarks.landmarks[19].y, landmarks.landmarks[19].z),  // pinky PIP
-                        new Vector3(landmarks.landmarks[20].x, landmarks.landmarks[20].y, landmarks.landmarks[20].z)   // pinky PIP
+                    float pinkyDIPAngle = CalculateFingerJointAngle(
+                        new Vector3(landmarks.landmarks[18].x, landmarks.landmarks[18].y, landmarks.landmarks[18].z),
+                        new Vector3(landmarks.landmarks[19].x, landmarks.landmarks[19].y, landmarks.landmarks[19].z),
+                        new Vector3(landmarks.landmarks[20].x, landmarks.landmarks[20].y, landmarks.landmarks[20].z),
+                        handNormal
                     );
 
                     handJoints[11] = pinkyMCPAngle;
                     handJoints[12] = pinkyPIPAngle;
-                    handJoints[13] = pinkyDIPAngle;
+                    //handJoints[13] = pinkyDIPAngle;
+                    handJoints[13] = GetRobustDIPAngle(pinkyDIPAngle);
 
-                    float wristAngle = CalculateWristAngle(
-                        new Vector3(landmarks.landmarks[0].x, landmarks.landmarks[0].y, landmarks.landmarks[0].z),  // wrist
-                        new Vector3(landmarks.landmarks[5].x, landmarks.landmarks[5].y, landmarks.landmarks[5].z),  // index MCP
-                        new Vector3(landmarks.landmarks[17].x, landmarks.landmarks[17].y, landmarks.landmarks[17].z) // pinky MCP
-                        );
-
-                    handJoints[14] = wristAngle;
+                    // Wrist angle
+                    //float wristAngle = CalculateWristAngle(wrist, indexMCP, pinkyMCP);
+                    handJoints[14] = 0.0f;
                 }
             }
             else
             {
                 handLabel = null;
             }
-    }
+        }
 
-    private float CalculateWristAngle(Vector3 wrist, Vector3 indexMCP, Vector3 pinkyMCP)
-    {
-        // Compute Forearm Vector (Wrist to midpoint of MCP joints)
-        Vector3 forearmMid = (indexMCP + pinkyMCP) / 2;
-        Vector3 vForearm = wrist - forearmMid;
+        // Alternative finger angle calculation with more explicit sign handling
+        private float CalculateFingerJointAngle(Vector3 proximal, Vector3 joint, Vector3 distal, Vector3 handNormal)
+        {
+            // Create vectors from the joint to adjacent points
+            Vector3 v1 = (proximal - joint).normalized;
+            Vector3 v2 = (distal - joint).normalized;
 
-        // Compute Hand Dorsal Vector (Cross product to get normal to the hand plane)
-        Vector3 vHand = Vector3.Cross(indexMCP - wrist, pinkyMCP - wrist);
+            // Calculate the unsigned angle
+            float dotProduct = Vector3.Dot(v1, v2);
+            float angleRad = Mathf.Acos(Mathf.Clamp(dotProduct, -1f, 1f));
+            float angleDeg = angleRad * Mathf.Rad2Deg;
 
-        // Normalize vectors
-        vForearm.Normalize();
-        vHand.Normalize();
+            // Determine the bending direction using the hand normal
+            Vector3 bendDirection = Vector3.Cross(v1, v2);
+            float bendSign = Vector3.Dot(bendDirection, handNormal) > 0 ? 1f : -1f;
 
-        // Compute wrist flexion-extension angle (in degrees)
-        float angleRad = Mathf.Acos(Mathf.Clamp(Vector3.Dot(vForearm, vHand), -1.0f, 1.0f));
-        float angleDeg = angleRad * Mathf.Rad2Deg;
+            // Convert to signed angle (0° = straight, negative = flexed, positive = hyperextended)
+            return (180f - angleDeg) * bendSign;
+        }
 
-        return angleDeg;
-    }
+        private float CalculateJointAngle(Vector3 pointA, Vector3 pointB, Vector3 pointC)
+        {
+            // Create vectors from the joint (pointB) to the adjacent points
+            Vector3 vector1 = (pointA - pointB).normalized;
+            Vector3 vector2 = (pointC - pointB).normalized;
 
-    private float CalculateJointAngle(Vector3 pointA, Vector3 pointB, Vector3 pointC)
-    {
-        // Convert landmarks to vectors
-        Vector3 vector1 = new Vector3(pointA.x - pointB.x, pointA.y - pointB.y, pointA.z - pointB.z);
-        Vector3 vector2 = new Vector3(pointC.x - pointB.x, pointC.y - pointB.y, pointC.z - pointB.z);
+            // Calculate the dot product for the angle
+            float dotProduct = Vector3.Dot(vector1, vector2);
 
-        // Calculate the dot product and magnitudes
-        float dotProduct = Vector3.Dot(vector1, vector2);
-        float magnitude1 = vector1.magnitude;
-        float magnitude2 = vector2.magnitude;
-    
-        // Calculate the angle in radians and convert to degrees
-        float angleRad = Mathf.Acos(Mathf.Clamp(dotProduct / (magnitude1 * magnitude2),-1f,1f));
-        float angleDeg = 180-(angleRad * Mathf.Rad2Deg);
+            // Calculate the unsigned angle
+            float angleRad = Mathf.Acos(Mathf.Clamp(dotProduct, -1f, 1f));
+            float angleDeg = angleRad * Mathf.Rad2Deg;
 
-        return angleDeg;
-    }
-  }
+            // To determine the sign, we need a reference plane
+            // For fingers, we can use the hand's normal vector or a consistent reference
+            // Here's a simple approach using the cross product to determine orientation
+            Vector3 crossProduct = Vector3.Cross(vector1, vector2);
+
+            // The sign depends on the orientation of the cross product
+            // You may need to adjust this based on your coordinate system
+            // For MediaPipe's coordinate system, positive Z typically points toward the camera
+            float sign = crossProduct.z > 0 ? 1f : -1f;
+
+            // Return signed angle (positive for extension, negative for flexion)
+            return (180f - angleDeg) * sign;
+        }
+
+        private float CalculateWristAngle(Vector3 wrist, Vector3 indexMCP, Vector3 pinkyMCP)
+        {
+            // Compute hand plane normal (palm normal)
+            Vector3 handPlaneNormal = Vector3.Cross(indexMCP - wrist, pinkyMCP - wrist).normalized;
+
+            // Compute forearm direction (from wrist toward the midpoint of MCP joints)
+            Vector3 forearmMid = (indexMCP + pinkyMCP) / 2;
+            Vector3 forearmDirection = (forearmMid - wrist).normalized;
+
+            // For wrist flexion/extension, we want the angle between the forearm and hand plane
+            // The dot product with the hand normal gives us the flexion/extension component
+            float flexionComponent = Vector3.Dot(forearmDirection, handPlaneNormal);
+
+            // Calculate the angle
+            float angleRad = Mathf.Asin(Mathf.Clamp(flexionComponent, -1f, 1f));
+            float angleDeg = angleRad * Mathf.Rad2Deg;
+
+            return angleDeg;
+        }
+
+        private float GetRobustDIPAngle(float pipAngle)
+        {
+            float estimatedDIP;
+            if (MediaPipeTask.task3Flag)
+            {
+                // Use biomechanical model when confidence is low
+                estimatedDIP = EstimateDIPFromPIP(pipAngle);
+            }
+            else
+            {
+                estimatedDIP = pipAngle;
+            }
+            return estimatedDIP;
+        }
+
+        // Apply anatomical constraints to DIP joint estimation
+        private float EstimateDIPFromPIP(float pipAngle)
+        {
+            // DIP typically moves 60-80% of PIP angle
+            float dipRatio = 0.7f;
+
+            // Anatomical limits: DIP typically 0-90° flexion
+            float estimatedDIP = Mathf.Clamp(pipAngle * dipRatio, -90f, 30f);
+
+            // Apply coupling constraint (DIP can't extend much when PIP is flexed)
+            if (pipAngle < -60f)
+            {
+                estimatedDIP = Mathf.Max(estimatedDIP, pipAngle - 30f);
+            }
+
+            return estimatedDIP;
+        }
+   }
 }

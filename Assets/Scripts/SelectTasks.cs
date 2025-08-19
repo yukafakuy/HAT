@@ -12,7 +12,7 @@ public class SelectTasks : MonoBehaviour
 {
     public TMP_Text patientID, providersName, todaysDate;
     public Toggle FingerExtensions, MCPFlexions, PIPFlexions, ThumbOut, ThumbLast, WristFlexExtend;
-    public TMP_Text buttonText;
+    public TMP_Text buttonText, wristText;
     private int taskNumber = 0;
 
     public Button PastResult, SignOut, BeginTask;
@@ -35,6 +35,16 @@ public class SelectTasks : MonoBehaviour
         BeginTask.onClick.AddListener(BeginTaskOnClick);
         SignOut.onClick.AddListener(SignOutOnClick);
         PastResult.onClick.AddListener(PastResultOnClick);
+
+        if (SetUp.webcamFlag)
+        {
+            WristFlexExtend.interactable = false;
+            wristText.enabled = true;
+        }
+        else
+        {
+            wristText.enabled = false;
+        }
     }
 
     void BeginTaskOnClick()
@@ -60,6 +70,9 @@ public class SelectTasks : MonoBehaviour
 
     void SignOutOnClick()
     {
+        LogIn.PatientID = "";
+        LogIn.ProvidersName = "";
+        LogIn.TodaysDate = "";
         SceneManager.LoadScene(0);
     }
 
