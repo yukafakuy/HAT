@@ -51,8 +51,6 @@ public class PopulateSeriesLeft : MonoBehaviour
     private List<float> wristFlex = new List<float>();
     private List<float> wristExtend = new List<float>();
 
-    private List<float> therapyType = new List<float>();
-
     //Series
     public static E2ChartData.Series series1 = new E2ChartData.Series();
     public static E2ChartData.Series series2 = new E2ChartData.Series();
@@ -94,284 +92,407 @@ public class PopulateSeriesLeft : MonoBehaviour
     {
         filePath = Application.dataPath + "/" + LogIn.PatientID + "_dataFile_Left.txt";
 
-        try
+        if (!File.Exists(filePath))
         {
-            string[] lines = File.ReadAllLines(filePath);
-            bool firstLine = true;
-
-            foreach (string line in lines)
+            Debug.Log($"No data file found at {filePath}. Creating empty series.");
+            InitializeEmptySeries();
+            return;
+        }
+        else
+        {
+            try
             {
-                if (firstLine)
+                string[] lines = File.ReadAllLines(filePath);
+                bool firstLine = true;
+
+                foreach (string line in lines)
                 {
-                    firstLine = false;
-                    continue;
+                    if (firstLine)
+                    {
+                        firstLine = false;
+                        continue;
+                    }
+
+                    string[] tokens = line.Split(new[] { ' ', '\t' });
+
+                    dates.Add(tokens[0]);
+                    thumbMCPmax.Add(-1f * parseString(tokens[1]));
+                    thumbMCPmin.Add(-1f * parseString(tokens[2]));
+                    thumbIPmax.Add(-1f * parseString(tokens[3]));
+                    thumbIPmin.Add(-1f * parseString(tokens[4]));
+
+                    indexMCPmax.Add(-1f * parseString(tokens[5]));
+                    indexMCPmin.Add(-1f * parseString(tokens[6]));
+                    indexPIPmax.Add(-1f * parseString(tokens[7]));
+                    indexPIPmin.Add(-1f * parseString(tokens[8]));
+                    indexDIPmax.Add(-1f * parseString(tokens[9]));
+                    indexDIPmin.Add(-1f * parseString(tokens[10]));
+
+                    middleMCPmax.Add(-1f * parseString(tokens[11]));
+                    middleMCPmin.Add(-1f * parseString(tokens[12]));
+                    middlePIPmax.Add(-1f * parseString(tokens[13]));
+                    middlePIPmin.Add(-1f * parseString(tokens[14]));
+                    middleDIPmax.Add(-1f * parseString(tokens[15]));
+                    middleDIPmin.Add(-1f * parseString(tokens[16]));
+
+                    ringMCPmax.Add(-1f * parseString(tokens[17]));
+                    ringMCPmin.Add(-1f * parseString(tokens[18]));
+                    ringPIPmax.Add(-1f * parseString(tokens[19]));
+                    ringPIPmin.Add(-1f * parseString(tokens[20]));
+                    ringDIPmax.Add(-1f * parseString(tokens[21]));
+                    ringDIPmin.Add(-1f * parseString(tokens[22]));
+
+                    pinkyMCPmax.Add(-1f * parseString(tokens[23]));
+                    pinkyMCPmin.Add(-1f * parseString(tokens[24]));
+                    pinkyPIPmax.Add(-1f * parseString(tokens[25]));
+                    pinkyPIPmin.Add(-1f * parseString(tokens[26]));
+                    pinkyDIPmax.Add(-1f * parseString(tokens[27]));
+                    pinkyDIPmin.Add(-1f * parseString(tokens[28]));
+
+                    wristExtend.Add(-1f * parseString(tokens[29]));
+                    wristFlex.Add(-1f * parseString(tokens[30]));
                 }
-
-                string[] tokens = line.Split(new[] { ' ', '\t' });
-
-                dates.Add(tokens[0]);
-                thumbMCPmax.Add(-1f * parseString(tokens[1]));
-                thumbMCPmin.Add(-1f * parseString(tokens[2]));
-                thumbIPmax.Add(-1f * parseString(tokens[3]));
-                thumbIPmin.Add(-1f * parseString(tokens[4]));
-
-                indexMCPmax.Add(-1f * parseString(tokens[5]));
-                indexMCPmin.Add(-1f * parseString(tokens[6]));
-                indexPIPmax.Add(-1f * parseString(tokens[7]));
-                indexPIPmin.Add(-1f * parseString(tokens[8]));
-                indexDIPmax.Add(-1f * parseString(tokens[9]));
-                indexDIPmin.Add(-1f * parseString(tokens[10]));
-
-                middleMCPmax.Add(-1f * parseString(tokens[11]));
-                middleMCPmin.Add(-1f * parseString(tokens[12]));
-                middlePIPmax.Add(-1f * parseString(tokens[13]));
-                middlePIPmin.Add(-1f * parseString(tokens[14]));
-                middleDIPmax.Add(-1f * parseString(tokens[15]));
-                middleDIPmin.Add(-1f * parseString(tokens[16]));
-
-                ringMCPmax.Add(-1f * parseString(tokens[17]));
-                ringMCPmin.Add(-1f * parseString(tokens[18]));
-                ringPIPmax.Add(-1f * parseString(tokens[19]));
-                ringPIPmin.Add(-1f * parseString(tokens[20]));
-                ringDIPmax.Add(-1f * parseString(tokens[21]));
-                ringDIPmin.Add(-1f * parseString(tokens[22]));
-
-                pinkyMCPmax.Add(-1f * parseString(tokens[23]));
-                pinkyMCPmin.Add(-1f * parseString(tokens[24]));
-                pinkyPIPmax.Add(-1f * parseString(tokens[25]));
-                pinkyPIPmin.Add(-1f * parseString(tokens[26]));
-                pinkyDIPmax.Add(-1f * parseString(tokens[27]));
-                pinkyDIPmin.Add(-1f * parseString(tokens[28]));
-
-                wristExtend.Add(-1f * parseString(tokens[29]));
-                wristFlex.Add(-1f * parseString(tokens[30]));
-
-                therapyType.Add(parseString(tokens[31]));
             }
+            catch (Exception ex)
+            {
+                Debug.Log($"An error occured: {ex.Message}");
+            }
+
+            //create new series
+            //Thumb MCP
+            series1.name = "Extension";
+            series1.dataY = new List<float>();
+            series1.dateTimeString = new List<string>();
+            series1.dateTimeTick = new List<long>();
+            series1.dataY.AddRange(thumbMCPmax);
+            series1.dateTimeString.AddRange(dates);
+            series2.name = "Flexion";
+            series2.dataY = new List<float>();
+            series2.dateTimeString = new List<string>();
+            series2.dateTimeTick = new List<long>();
+            series2.dataY.AddRange(thumbMCPmin);
+            series2.dateTimeString.AddRange(dates);
+
+            //Thumb IP
+            series3.name = "Extension";
+            series3.dataY = new List<float>();
+            series3.dateTimeString = new List<string>();
+            series3.dateTimeTick = new List<long>();
+            series3.dataY.AddRange(thumbIPmax);
+            series3.dateTimeString.AddRange(dates);
+            series4.name = "Flexion";
+            series4.dataY = new List<float>();
+            series4.dateTimeString = new List<string>();
+            series4.dateTimeTick = new List<long>();
+            series4.dataY.AddRange(thumbIPmin);
+            series4.dateTimeString.AddRange(dates);
+
+            //Index MCP
+            series5.name = "Extension";
+            series5.dataY = new List<float>();
+            series5.dateTimeString = new List<string>();
+            series5.dateTimeTick = new List<long>();
+            series5.dataY.AddRange(indexMCPmax);
+            series5.dateTimeString.AddRange(dates);
+            series6.name = "Flexion";
+            series6.dataY = new List<float>();
+            series6.dateTimeString = new List<string>();
+            series6.dateTimeTick = new List<long>();
+            series6.dataY.AddRange(indexMCPmin);
+            series6.dateTimeString.AddRange(dates);
+
+            //Index PIP
+            series7.name = "Extension";
+            series7.dataY = new List<float>();
+            series7.dateTimeString = new List<string>();
+            series7.dateTimeTick = new List<long>();
+            series7.dataY.AddRange(indexPIPmax);
+            series7.dateTimeString.AddRange(dates);
+            series8.name = "Flexion";
+            series8.dataY = new List<float>();
+            series8.dateTimeString = new List<string>();
+            series8.dateTimeTick = new List<long>();
+            series8.dataY.AddRange(indexPIPmin);
+            series8.dateTimeString.AddRange(dates);
+
+            //Index DIP
+            series9.name = "Extension";
+            series9.dataY = new List<float>();
+            series9.dateTimeString = new List<string>();
+            series9.dateTimeTick = new List<long>();
+            series9.dataY.AddRange(indexDIPmax);
+            series9.dateTimeString.AddRange(dates);
+            series10.name = "Flexion";
+            series10.dataY = new List<float>();
+            series10.dateTimeString = new List<string>();
+            series10.dateTimeTick = new List<long>();
+            series10.dataY.AddRange(indexDIPmin);
+            series10.dateTimeString.AddRange(dates);
+
+            //middle MCP
+            series11.name = "Extension";
+            series11.dataY = new List<float>();
+            series11.dateTimeString = new List<string>();
+            series11.dateTimeTick = new List<long>();
+            series11.dataY.AddRange(middleMCPmax);
+            series11.dateTimeString.AddRange(dates);
+            series12.name = "Flexion";
+            series12.dataY = new List<float>();
+            series12.dateTimeString = new List<string>();
+            series12.dateTimeTick = new List<long>();
+            series12.dataY.AddRange(middleMCPmin);
+            series12.dateTimeString.AddRange(dates);
+
+            //middle PIP
+            series13.name = "Extension";
+            series13.dataY = new List<float>();
+            series13.dateTimeString = new List<string>();
+            series13.dateTimeTick = new List<long>();
+            series13.dataY.AddRange(middlePIPmax);
+            series13.dateTimeString.AddRange(dates);
+            series14.name = "Flexion";
+            series14.dataY = new List<float>();
+            series14.dateTimeString = new List<string>();
+            series14.dateTimeTick = new List<long>();
+            series14.dataY.AddRange(middlePIPmin);
+            series14.dateTimeString.AddRange(dates);
+
+            //middle DIP
+            series15.name = "Extension";
+            series15.dataY = new List<float>();
+            series15.dateTimeString = new List<string>();
+            series15.dateTimeTick = new List<long>();
+            series15.dataY.AddRange(middleDIPmax);
+            series15.dateTimeString.AddRange(dates);
+            series16.name = "Flexion";
+            series16.dataY = new List<float>();
+            series16.dateTimeString = new List<string>();
+            series16.dateTimeTick = new List<long>();
+            series16.dataY.AddRange(middleDIPmin);
+            series16.dateTimeString.AddRange(dates);
+
+            //ring MCP
+            series17.name = "Extension";
+            series17.dataY = new List<float>();
+            series17.dateTimeString = new List<string>();
+            series17.dateTimeTick = new List<long>();
+            series17.dataY.AddRange(ringMCPmax);
+            series17.dateTimeString.AddRange(dates);
+            series18.name = "Flexion";
+            series18.dataY = new List<float>();
+            series18.dateTimeString = new List<string>();
+            series18.dateTimeTick = new List<long>();
+            series18.dataY.AddRange(ringMCPmin);
+            series18.dateTimeString.AddRange(dates);
+
+            //ring PIP
+            series19.name = "Extension";
+            series19.dataY = new List<float>();
+            series19.dateTimeString = new List<string>();
+            series19.dateTimeTick = new List<long>();
+            series19.dataY.AddRange(ringPIPmax);
+            series19.dateTimeString.AddRange(dates);
+            series20.name = "Flexion";
+            series20.dataY = new List<float>();
+            series20.dateTimeString = new List<string>();
+            series20.dateTimeTick = new List<long>();
+            series20.dataY.AddRange(ringPIPmin);
+            series20.dateTimeString.AddRange(dates);
+
+
+            //ring DIP
+            series21.name = "Extension";
+            series21.dataY = new List<float>();
+            series21.dateTimeString = new List<string>();
+            series21.dateTimeTick = new List<long>();
+            series21.dataY.AddRange(ringDIPmax);
+            series21.dateTimeString.AddRange(dates);
+            series22.name = "Flexion";
+            series22.dataY = new List<float>();
+            series22.dateTimeString = new List<string>();
+            series22.dateTimeTick = new List<long>();
+            series22.dataY.AddRange(ringDIPmin);
+            series22.dateTimeString.AddRange(dates);
+
+            //pinky MCP
+            series23.name = "Extension";
+            series23.dataY = new List<float>();
+            series23.dateTimeString = new List<string>();
+            series23.dateTimeTick = new List<long>();
+            series23.dataY.AddRange(pinkyMCPmax);
+            series23.dateTimeString.AddRange(dates);
+            series24.name = "Flexion";
+            series24.dataY = new List<float>();
+            series24.dateTimeString = new List<string>();
+            series24.dateTimeTick = new List<long>();
+            series24.dataY.AddRange(pinkyMCPmin);
+            series24.dateTimeString.AddRange(dates);
+
+            //pinky PIP
+            series25.name = "Extension";
+            series25.dataY = new List<float>();
+            series25.dateTimeString = new List<string>();
+            series25.dateTimeTick = new List<long>();
+            series25.dataY.AddRange(pinkyPIPmax);
+            series25.dateTimeString.AddRange(dates);
+            series26.name = "Flexion";
+            series26.dataY = new List<float>();
+            series26.dateTimeString = new List<string>();
+            series26.dateTimeTick = new List<long>();
+            series26.dataY.AddRange(pinkyPIPmin);
+            series26.dateTimeString.AddRange(dates);
+
+            //pinky DIP
+            series27.name = "Extension";
+            series27.dataY = new List<float>();
+            series27.dateTimeString = new List<string>();
+            series27.dateTimeTick = new List<long>();
+            series27.dataY.AddRange(pinkyDIPmax);
+            series27.dateTimeString.AddRange(dates);
+            series28.name = "Flexion";
+            series28.dataY = new List<float>();
+            series28.dateTimeString = new List<string>();
+            series28.dateTimeTick = new List<long>();
+            series28.dataY.AddRange(pinkyDIPmin);
+            series28.dateTimeString.AddRange(dates);
+
+            //wrist
+            series29.name = "Extension";
+            series29.dataY = new List<float>();
+            series29.dateTimeString = new List<string>();
+            series29.dateTimeTick = new List<long>();
+            series29.dataY.AddRange(wristExtend);
+            series29.dateTimeString.AddRange(dates);
+            series30.name = "Flexion";
+            series30.dataY = new List<float>();
+            series30.dateTimeString = new List<string>();
+            series30.dateTimeTick = new List<long>();
+            series30.dataY.AddRange(wristFlex);
+            series30.dateTimeString.AddRange(dates);
         }
-        catch (Exception ex)
+    }
+    private E2ChartData.Series MakeSeries(string name, List<float> values, List<string> dateLabels)
+    {
+        return new E2ChartData.Series()
         {
-            UnityEngine.Debug.Log("An error occured {ex.Message}");
-        }
+            name = name,
+            dataY = values != null ? new List<float>(values) : new List<float>(),
+            dateTimeString = dateLabels != null ? new List<string>(dateLabels) : new List<string>(),
+            dateTimeTick = new List<long>()
+        };
+    }
+    private E2ChartData.Series MakeEmptySeries(string name)
+    {
+        return new E2ChartData.Series()
+        {
+            name = name,
+            dataY = new List<float>(),
+            dateTimeString = new List<string>(),
+            dateTimeTick = new List<long>()
+        };
+    }
+    private void InitializeSeries()
+    {
+        // Thumb MCP
+        series1 = MakeSeries("Extension", thumbMCPmax, dates);
+        series2 = MakeSeries("Flexion", thumbMCPmin, dates);
 
-        //create new series
-        //Thumb MCP
-        series1.name = "Extension";
-        series1.dataY = new List<float>();
-        series1.dateTimeString = new List<string>();
-        series1.dateTimeTick = new List<long>();
-        series1.dataY.AddRange(thumbMCPmax);
-        series1.dateTimeString.AddRange(dates);
-        series2.name = "Flexion";
-        series2.dataY = new List<float>();
-        series2.dateTimeString = new List<string>();
-        series2.dateTimeTick = new List<long>();
-        series2.dataY.AddRange(thumbMCPmin);
-        series2.dateTimeString.AddRange(dates);
+        // Thumb IP
+        series3 = MakeSeries("Extension", thumbIPmax, dates);
+        series4 = MakeSeries("Flexion", thumbIPmin, dates);
 
-        //Thumb IP
-        series3.name = "Extension";
-        series3.dataY = new List<float>();
-        series3.dateTimeString = new List<string>();
-        series3.dateTimeTick = new List<long>();
-        series3.dataY.AddRange(thumbIPmax);
-        series3.dateTimeString.AddRange(dates);
-        series4.name = "Flexion";
-        series4.dataY = new List<float>();
-        series4.dateTimeString = new List<string>();
-        series4.dateTimeTick = new List<long>();
-        series4.dataY.AddRange(thumbIPmin);
-        series4.dateTimeString.AddRange(dates);
+        // Index MCP
+        series5 = MakeSeries("Extension", indexMCPmax, dates);
+        series6 = MakeSeries("Flexion", indexMCPmin, dates);
 
-        //Index MCP
-        series5.name = "Extension";
-        series5.dataY = new List<float>();
-        series5.dateTimeString = new List<string>();
-        series5.dateTimeTick = new List<long>();
-        series5.dataY.AddRange(indexMCPmax);
-        series5.dateTimeString.AddRange(dates);
-        series6.name = "Flexion";
-        series6.dataY = new List<float>();
-        series6.dateTimeString = new List<string>();
-        series6.dateTimeTick = new List<long>();
-        series6.dataY.AddRange(indexMCPmin);
-        series6.dateTimeString.AddRange(dates);
+        // Index PIP
+        series7 = MakeSeries("Extension", indexPIPmax, dates);
+        series8 = MakeSeries("Flexion", indexPIPmin, dates);
 
-        //Index PIP
-        series7.name = "Extension";
-        series7.dataY = new List<float>();
-        series7.dateTimeString = new List<string>();
-        series7.dateTimeTick = new List<long>();
-        series7.dataY.AddRange(indexPIPmax);
-        series7.dateTimeString.AddRange(dates);
-        series8.name = "Flexion";
-        series8.dataY = new List<float>();
-        series8.dateTimeString = new List<string>();
-        series8.dateTimeTick = new List<long>();
-        series8.dataY.AddRange(indexPIPmin);
-        series8.dateTimeString.AddRange(dates);
+        // Index DIP
+        series9 = MakeSeries("Extension", indexDIPmax, dates);
+        series10 = MakeSeries("Flexion", indexDIPmin, dates);
 
-        //Index DIP
-        series9.name = "Extension";
-        series9.dataY = new List<float>();
-        series9.dateTimeString = new List<string>();
-        series9.dateTimeTick = new List<long>();
-        series9.dataY.AddRange(indexDIPmax);
-        series9.dateTimeString.AddRange(dates);
-        series10.name = "Flexion";
-        series10.dataY = new List<float>();
-        series10.dateTimeString = new List<string>();
-        series10.dateTimeTick = new List<long>();
-        series10.dataY.AddRange(indexDIPmin);
-        series10.dateTimeString.AddRange(dates);
+        // Middle MCP
+        series11 = MakeSeries("Extension", middleMCPmax, dates);
+        series12 = MakeSeries("Flexion", middleMCPmin, dates);
 
-        //middle MCP
-        series11.name = "Extension";
-        series11.dataY = new List<float>();
-        series11.dateTimeString = new List<string>();
-        series11.dateTimeTick = new List<long>();
-        series11.dataY.AddRange(middleMCPmax);
-        series11.dateTimeString.AddRange(dates);
-        series12.name = "Flexion";
-        series12.dataY = new List<float>();
-        series12.dateTimeString = new List<string>();
-        series12.dateTimeTick = new List<long>();
-        series12.dataY.AddRange(middleMCPmin);
-        series12.dateTimeString.AddRange(dates);
+        // Middle PIP
+        series13 = MakeSeries("Extension", middlePIPmax, dates);
+        series14 = MakeSeries("Flexion", middlePIPmin, dates);
 
-        //middle PIP
-        series13.name = "Extension";
-        series13.dataY = new List<float>();
-        series13.dateTimeString = new List<string>();
-        series13.dateTimeTick = new List<long>();
-        series13.dataY.AddRange(middlePIPmax);
-        series13.dateTimeString.AddRange(dates);
-        series14.name = "Flexion";
-        series14.dataY = new List<float>();
-        series14.dateTimeString = new List<string>();
-        series14.dateTimeTick = new List<long>();
-        series14.dataY.AddRange(middlePIPmin);
-        series14.dateTimeString.AddRange(dates);
+        // Middle DIP
+        series15 = MakeSeries("Extension", middleDIPmax, dates);
+        series16 = MakeSeries("Flexion", middleDIPmin, dates);
 
-        //middle DIP
-        series15.name = "Extension";
-        series15.dataY = new List<float>();
-        series15.dateTimeString = new List<string>();
-        series15.dateTimeTick = new List<long>();
-        series15.dataY.AddRange(middleDIPmax);
-        series15.dateTimeString.AddRange(dates);
-        series16.name = "Flexion";
-        series16.dataY = new List<float>();
-        series16.dateTimeString = new List<string>();
-        series16.dateTimeTick = new List<long>();
-        series16.dataY.AddRange(middleDIPmin);
-        series16.dateTimeString.AddRange(dates);
+        // Ring MCP
+        series17 = MakeSeries("Extension", ringMCPmax, dates);
+        series18 = MakeSeries("Flexion", ringMCPmin, dates);
 
-        //ring MCP
-        series17.name = "Extension";
-        series17.dataY = new List<float>();
-        series17.dateTimeString = new List<string>();
-        series17.dateTimeTick = new List<long>();
-        series17.dataY.AddRange(ringMCPmax);
-        series17.dateTimeString.AddRange(dates);
-        series18.name = "Flexion";
-        series18.dataY = new List<float>();
-        series18.dateTimeString = new List<string>();
-        series18.dateTimeTick = new List<long>();
-        series18.dataY.AddRange(ringMCPmin);
-        series18.dateTimeString.AddRange(dates);
+        // Ring PIP
+        series19 = MakeSeries("Extension", ringPIPmax, dates);
+        series20 = MakeSeries("Flexion", ringPIPmin, dates);
 
-        //ring PIP
-        series19.name = "Extension";
-        series19.dataY = new List<float>();
-        series19.dateTimeString = new List<string>();
-        series19.dateTimeTick = new List<long>();
-        series19.dataY.AddRange(ringPIPmax);
-        series19.dateTimeString.AddRange(dates);
-        series20.name = "Flexion";
-        series20.dataY = new List<float>();
-        series20.dateTimeString = new List<string>();
-        series20.dateTimeTick = new List<long>();
-        series20.dataY.AddRange(ringPIPmin);
-        series20.dateTimeString.AddRange(dates);
+        // Ring DIP
+        series21 = MakeSeries("Extension", ringDIPmax, dates);
+        series22 = MakeSeries("Flexion", ringDIPmin, dates);
 
+        // Pinky MCP
+        series23 = MakeSeries("Extension", pinkyMCPmax, dates);
+        series24 = MakeSeries("Flexion", pinkyMCPmin, dates);
 
-        //ring DIP
-        series21.name = "Extension";
-        series21.dataY = new List<float>();
-        series21.dateTimeString = new List<string>();
-        series21.dateTimeTick = new List<long>();
-        series21.dataY.AddRange(ringDIPmax);
-        series21.dateTimeString.AddRange(dates);
-        series22.name = "Flexion";
-        series22.dataY = new List<float>();
-        series22.dateTimeString = new List<string>();
-        series22.dateTimeTick = new List<long>();
-        series22.dataY.AddRange(ringDIPmin);
-        series22.dateTimeString.AddRange(dates);
+        // Pinky PIP
+        series25 = MakeSeries("Extension", pinkyPIPmax, dates);
+        series26 = MakeSeries("Flexion", pinkyPIPmin, dates);
 
-        //pinky MCP
-        series23.name = "Extension";
-        series23.dataY = new List<float>();
-        series23.dateTimeString = new List<string>();
-        series23.dateTimeTick = new List<long>();
-        series23.dataY.AddRange(pinkyMCPmax);
-        series23.dateTimeString.AddRange(dates);
-        series24.name = "Flexion";
-        series24.dataY = new List<float>();
-        series24.dateTimeString = new List<string>();
-        series24.dateTimeTick = new List<long>();
-        series24.dataY.AddRange(pinkyMCPmin);
-        series24.dateTimeString.AddRange(dates);
+        // Pinky DIP
+        series27 = MakeSeries("Extension", pinkyDIPmax, dates);
+        series28 = MakeSeries("Flexion", pinkyDIPmin, dates);
 
-        //pinky PIP
-        series25.name = "Extension";
-        series25.dataY = new List<float>();
-        series25.dateTimeString = new List<string>();
-        series25.dateTimeTick = new List<long>();
-        series25.dataY.AddRange(pinkyPIPmax);
-        series25.dateTimeString.AddRange(dates);
-        series26.name = "Flexion";
-        series26.dataY = new List<float>();
-        series26.dateTimeString = new List<string>();
-        series26.dateTimeTick = new List<long>();
-        series26.dataY.AddRange(pinkyPIPmin);
-        series26.dateTimeString.AddRange(dates);
-
-        //pinky DIP
-        series27.name = "Extension";
-        series27.dataY = new List<float>();
-        series27.dateTimeString = new List<string>();
-        series27.dateTimeTick = new List<long>();
-        series27.dataY.AddRange(pinkyDIPmax);
-        series27.dateTimeString.AddRange(dates);
-        series28.name = "Flexion";
-        series28.dataY = new List<float>();
-        series28.dateTimeString = new List<string>();
-        series28.dateTimeTick = new List<long>();
-        series28.dataY.AddRange(pinkyDIPmin);
-        series28.dateTimeString.AddRange(dates);
-
-        //wrist
-        series29.name = "Extension";
-        series29.dataY = new List<float>();
-        series29.dateTimeString = new List<string>();
-        series29.dateTimeTick = new List<long>();
-        series29.dataY.AddRange(wristExtend);
-        series29.dateTimeString.AddRange(dates);
-        series30.name = "Flexion";
-        series30.dataY = new List<float>();
-        series30.dateTimeString = new List<string>();
-        series30.dateTimeTick = new List<long>();
-        series30.dataY.AddRange(wristFlex);
-        series30.dateTimeString.AddRange(dates);
+        // Wrist
+        series29 = MakeSeries("Extension", wristExtend, dates);
+        series30 = MakeSeries("Flexion", wristFlex, dates);
+    }
+    private void InitializeEmptySeries()
+    {
+        series1 = MakeEmptySeries("Extension");
+        series2 = MakeEmptySeries("Flexion");
+        series3 = MakeEmptySeries("Extension");
+        series4 = MakeEmptySeries("Flexion");
+        series5 = MakeEmptySeries("Extension");
+        series6 = MakeEmptySeries("Flexion");
+        series7 = MakeEmptySeries("Extension");
+        series8 = MakeEmptySeries("Flexion");
+        series9 = MakeEmptySeries("Extension");
+        series10 = MakeEmptySeries("Flexion");
+        series11 = MakeEmptySeries("Extension");
+        series12 = MakeEmptySeries("Flexion");
+        series13 = MakeEmptySeries("Extension");
+        series14 = MakeEmptySeries("Flexion");
+        series15 = MakeEmptySeries("Extension");
+        series16 = MakeEmptySeries("Flexion");
+        series17 = MakeEmptySeries("Extension");
+        series18 = MakeEmptySeries("Flexion");
+        series19 = MakeEmptySeries("Extension");
+        series20 = MakeEmptySeries("Flexion");
+        series21 = MakeEmptySeries("Extension");
+        series22 = MakeEmptySeries("Flexion");
+        series23 = MakeEmptySeries("Extension");
+        series24 = MakeEmptySeries("Flexion");
+        series25 = MakeEmptySeries("Extension");
+        series26 = MakeEmptySeries("Flexion");
+        series27 = MakeEmptySeries("Extension");
+        series28 = MakeEmptySeries("Flexion");
+        series29 = MakeEmptySeries("Extension");
+        series30 = MakeEmptySeries("Flexion");
     }
     private float parseString(string token)
     {
-        if (float.TryParse(token, out float result)) { };
-
-        return result;
-
+        if (float.TryParse(token, out float result))
+        {
+            return result;
+        }
+        return float.NaN; // represents missing data
     }
     // Update is called once per frame
     void Update()

@@ -547,11 +547,6 @@ public class Task1 : MonoBehaviour
                     pinky_MCP + "\t" + pinky_PIP + "\t" + pinky_DIP + "\t" + wrist_flex +
                     "\t" + SetUp.webcamFlag.ToString() +"\t" + LogIn.ProvidersName;
 
-                UnityEngine.Debug.Log("index: " + index_PIP + "\t" + index_DIP + "\t" +
-                    "middle: " + middle_PIP + "\t" + middle_DIP + "\t" +
-                    "ring: " + ring_PIP + "\t" + ring_DIP + "\t" +
-                    "pinky: " + pinky_PIP + "\t" + pinky_DIP);
-
                 rawLeapRight.WriteLine(rawDataRight);
             }
         }
@@ -600,7 +595,6 @@ public class Task1 : MonoBehaviour
                     pinky_MCP + "\t" + pinky_PIP + "\t" + pinky_DIP + "\t" + wrist_flex +
                     "\t" + SetUp.webcamFlag.ToString() + "\t" + LogIn.ProvidersName;
 
-                //UnityEngine.Debug.Log(index_PIP);
 
                 rawLeapLeft.WriteLine(rawDataLeft);
             }

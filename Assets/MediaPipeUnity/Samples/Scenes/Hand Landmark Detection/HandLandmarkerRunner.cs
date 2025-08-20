@@ -6,11 +6,13 @@
 
 using Leap;
 using Mediapipe.Tasks.Vision.HandLandmarker;
+using System;
 using System.Collections;
 using System.Diagnostics.Tracing;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using static Mediapipe.ImageFormat.Types;
 
 namespace Mediapipe.Unity.Sample.HandLandmarkDetection
@@ -27,6 +29,8 @@ namespace Mediapipe.Unity.Sample.HandLandmarkDetection
 
     public readonly HandLandmarkDetectionConfig config = new HandLandmarkDetectionConfig();
 
+    private long timestamp = 0;
+
     public override void Stop()
     {
       base.Stop();
@@ -34,8 +38,36 @@ namespace Mediapipe.Unity.Sample.HandLandmarkDetection
       _textureFramePool = null;
     }
 
+    private void Start()
+    {
+        StartCoroutine(Run());
+    }
+
+    private void OnDestroy()
+    {
+        Debug.Log("Cleaning up HandLandmarkerRunner...");
+
+        // Release HandLandmarker
+        taskApi = null;
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+
+        // Stop ImageSource
+        if (ImageSourceProvider.ImageSource != null)
+        {
+            ImageSourceProvider.ImageSource?.Stop();
+        }
+
+        // Shutdown GPU if desired
+        if (GpuManager.IsInitialized)
+        {
+            GpuManager.Shutdown();
+        }
+    }
+
     protected override IEnumerator Run()
     {
+      Debug.Log("========= WE ARE INSIDE HANDLANDMARKER NOW! =========");
       Debug.Log($"Delegate = {config.Delegate}");
       Debug.Log($"Image Read Mode = {config.ImageReadMode}");
       Debug.Log($"Running Mode = {config.RunningMode}");
@@ -44,7 +76,17 @@ namespace Mediapipe.Unity.Sample.HandLandmarkDetection
       Debug.Log($"MinHandPresenceConfidence = {config.MinHandPresenceConfidence}");
       Debug.Log($"MinTrackingConfidence = {config.MinTrackingConfidence}");
 
-      yield return AssetLoader.PrepareAssetAsync(config.ModelPath);
+
+    // Determine model path depending on Editor vs Build
+    string modelPath;
+#if UNITY_EDITOR
+    modelPath = config.ModelPath;
+#else
+    modelPath = Application.streamingAssetsPath + "/hand_landmarker.bytes";
+#endif
+    Debug.Log($"Loading hand_landmarker model from: {modelPath}");
+
+    yield return AssetLoader.PrepareAssetAsync(modelPath);
 
       var options = config.GetHandLandmarkerOptions(config.RunningMode == Tasks.Vision.Core.RunningMode.LIVE_STREAM ? OnHandLandmarkDetectionOutput : null);
       taskApi = HandLandmarker.CreateFromOptions(options, GpuManager.GpuResources);
@@ -153,7 +195,8 @@ namespace Mediapipe.Unity.Sample.HandLandmarkDetection
             }
             break;
           case Tasks.Vision.Core.RunningMode.LIVE_STREAM:
-            taskApi.DetectAsync(image, GetCurrentTimestampMillisec(), imageProcessingOptions);
+            timestamp += 1;
+            taskApi.DetectAsync(image, timestamp, imageProcessingOptions);
             break;
         }
       }
@@ -323,7 +366,7 @@ namespace Mediapipe.Unity.Sample.HandLandmarkDetection
 
                     // Wrist angle
                     //float wristAngle = CalculateWristAngle(wrist, indexMCP, pinkyMCP);
-                    handJoints[14] = 0.0f;
+                    //handJoints[14] = ;
                 }
             }
             else
@@ -402,7 +445,7 @@ namespace Mediapipe.Unity.Sample.HandLandmarkDetection
         private float GetRobustDIPAngle(float pipAngle)
         {
             float estimatedDIP;
-            if (MediaPipeTask.task3Flag)
+            if (MediaPipeTask.task3Mod)
             {
                 // Use biomechanical model when confidence is low
                 estimatedDIP = EstimateDIPFromPIP(pipAngle);

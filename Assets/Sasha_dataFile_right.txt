@@ -1,4 +1,5 @@
-Date	ThumbMCP Ext	ThumbMCP Flex	ThumbIP Ext	ThumbIP Flex	IndexMCP Ext	IndexMCP Flex	IndexPIP Ext	IndexPIP Flex	IndexDIP Ext	IndexDIP Flex	MiddleMCP Ext	MiddleMCP Flex	MiddlePIP Ext	MiddlePIP Flex	MiddleDIP Ext	MiddleDIP Flex	RingMCP Ext	RingMCP Flex	RingPIP Ext	RingPIP Flex	RingDIP Ext	RingDIP Flex	LittleMCP Ext	LittleMCP Flex	LittlePIP Ext	LittlePIP Flex	LittleDIP Ext	LittleDIP Flex	Wrist Ext	Wrist Flex	Pre Therapy Flag	Webcam Flag	Provider
-2025-05-01	11	-30	0	-33	7	-69	-2	-82	-4	-46	3	-87	-3	-91	-5	-48	6	-89	-5	-92	-4	-42	24	-87	-6	-81	-6	-47	69	-66	True	False	Yuka
-2025-05-05	14	-30	2	-39	17	-68	1	-78	-3	-44	17	-84	1	-86	-3	-47	24	-89	-1	-85	-4	-41	26	-84	-2	-74	-4	-46	65	-65	True	False	Yuka
-2025-05-15	11	-30	0	-36	14	-60	0	-76	-2	-43	15	-85	1	-80	2	-42	21	-93	-1	-73	-1	-40	31	-91	-4	-66	-3	-46	65	-73	True	False	Yuka
+Date	ThumbMCP Ext	ThumbMCP Flex	ThumbIP Ext	ThumbIP Flex	IndexMCP Ext	IndexMCP Flex	IndexPIP Ext	IndexPIP Flex	IndexDIP Ext	IndexDIP Flex	MiddleMCP Ext	MiddleMCP Flex	MiddlePIP Ext	MiddlePIP Flex	MiddleDIP Ext	MiddleDIP Flex	RingMCP Ext	RingMCP Flex	RingPIP Ext	RingPIP Flex	RingDIP Ext	RingDIP Flex	LittleMCP Ext	LittleMCP Flex	LittlePIP Ext	LittlePIP Flex	LittleDIP Ext	LittleDIP Flex	Wrist Ext	Wrist Flex	Webcam Flag	Provider
+2025-05-01	11	-30	0	-33	7	-69	-2	-82	-4	-46	3	-87	-3	-91	-5	-48	6	-89	-5	-92	-4	-42	24	-87	-6	-81	-6	-47	69	-66	False	Yuka
+2025-05-05	14	null	2	-39	17	-68	null	-78	-3	-44	17	-84	1	-86	-3	-47	24	-89	-1	-85	-4	-41	26	-84	-2	-74	-4	-46	65	-65	False	Yuka
+2025-05-15	11	-30	0	-36	14	-60	0	-76	-2	-43	15	-85	1	-80	2	-42	21	-93	-1	-73	-1	-40	31	-91	-4	-66	-3	-46	65	-73	False	Yuka
+2025-06-15	11	-30	0	-36	14	-60	0	-76	-2	-43	15	-85	1	-80	2	-42	21	-93	-1	-73	-1	-40	31	-91	-4	-66	-3	-46	65	-73	False	Yuka

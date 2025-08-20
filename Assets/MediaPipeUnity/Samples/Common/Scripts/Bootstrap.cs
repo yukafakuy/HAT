@@ -17,7 +17,22 @@ namespace Mediapipe.Unity.Sample
     public bool isFinished { get; private set; }
     private bool _isGlogInitialized;
 
-    private void OnEnable()
+    private static Bootstrap _instance;
+    public static Bootstrap Instance => _instance;
+
+    private void Awake()
+    {
+        // Ensure singleton
+        if (_instance != null && _instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        _instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
+        private void OnEnable()
     {
       var _ = StartCoroutine(Init());
     }
@@ -44,23 +59,29 @@ namespace Mediapipe.Unity.Sample
         case AppSettings.AssetLoaderType.AssetBundle:
           {
             AssetLoader.Provide(new AssetBundleResourceManager("mediapipe"));
+            Debug.Log("Provided ResourceManager: " + _appSettings.assetLoaderType);
             break;
           }
         case AppSettings.AssetLoaderType.StreamingAssets:
           {
             AssetLoader.Provide(new StreamingAssetsResourceManager());
+            Debug.Log("Provided ResourceManager: " + _appSettings.assetLoaderType);
             break;
           }
         case AppSettings.AssetLoaderType.Local:
           {
 #if UNITY_EDITOR
             AssetLoader.Provide(new LocalResourceManager());
-            break;
+            Debug.Log("Provided ResourceManager: " + _appSettings.assetLoaderType);
+            //break;
 #else
-            Debug.LogError("LocalResourceManager is only supported on UnityEditor." +
-              "To avoid this error, consider switching to the StreamingAssetsResourceManager and copying the required resources under StreamingAssets, for example.");
-            yield break;
+            //Debug.LogError("LocalResourceManager is only supported on UnityEditor." +
+            //  "To avoid this error, consider switching to the StreamingAssetsResourceManager and copying the required resources under StreamingAssets, for example.");
+            AssetLoader.Provide(new StreamingAssetsResourceManager());
+            Debug.Log("Provided ResourceManager: " + _appSettings.assetLoaderType);
+            //yield break;
 #endif
+            break;
           }
         default:
           {
@@ -101,7 +122,26 @@ namespace Mediapipe.Unity.Sample
 #endif
     }
 
-    private void OnApplicationQuit()
+    public void SceneCleanup()
+    {
+        Debug.Log("Bootstrap: SceneCleanup called");
+
+        // Stop ImageSource
+        if (ImageSourceProvider.ImageSource != null)
+        {
+            ImageSourceProvider.ImageSource?.Stop();
+            }
+
+        // Optionally shutdown GPU
+        if (GpuManager.IsInitialized)
+        {
+            GpuManager.Shutdown();
+        }
+
+        // HandLandmarkerRunner should also clean up its taskApi
+    }
+
+        private void OnApplicationQuit()
     {
       GpuManager.Shutdown();
 

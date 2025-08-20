@@ -51,8 +51,6 @@ public class PopulateSeriesRight : MonoBehaviour
     private List<float> wristFlex = new List<float>();
     private List<float> wristExtend = new List<float>();
 
-    private List<float> therapyType = new List<float>();
-
     //Series
     public static E2ChartData.Series series1 = new E2ChartData.Series();
     public static E2ChartData.Series series2 = new E2ChartData.Series();
@@ -146,8 +144,6 @@ public class PopulateSeriesRight : MonoBehaviour
 
                 wristExtend.Add(-1f * parseString(tokens[29]));
                 wristFlex.Add(-1f * parseString(tokens[30]));
-
-                therapyType.Add(parseString(tokens[31]));
             }
         }
 
@@ -384,11 +380,13 @@ public class PopulateSeriesRight : MonoBehaviour
     }
     private float parseString(string token)
     {
-        if (float.TryParse(token, out float result)) { } ;
-
-        return result;
-        
+        if (float.TryParse(token, out float result))
+        {
+            return result;
+        }
+        return float.NaN; // represents missing data
     }
+
     // Update is called once per frame
     void Update()
     {

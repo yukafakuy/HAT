@@ -11,7 +11,6 @@ using TMPro;
 using Unity;
 using Unity.VisualScripting;
 using UnityEditor;
-using UnityEditor.Experimental.RestService;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -411,47 +410,45 @@ public class VisualizeResults : MonoBehaviour
     private void extractData(string path, string pathSave)
     {
         string[] dataExtracted = Enumerable.Repeat("null", 33).ToArray();
+        List<bool> filesExist = new List<bool> { false, false, false, false, false, false, false, false };
 
-        List<bool> filesExist = new List<bool> {false,false, false, false, false, false, false, false};
-
-        for (int i = 1; i <9; i++)
+        for (int i = 1; i < 9; i++)
         {
             string path_new = path + i.ToString() + ".txt";
-            
+
             if (File.Exists(path_new))
             {
                 filesExist[i - 1] = true;
 
                 dataExtracted[0] = LogIn.TodaysDate;
-                //open files
                 string[] lines = File.ReadAllLines(path_new);
-                List < List<float>> columns = new List<List<float>>();
+
+                List<List<float>> columns = new List<List<float>>();
+                List<List<string>> stringColumns = new List<List<string>>();
 
                 foreach (string line in lines)
                 {
-                    string[] tokens = line.Split(new[] { ' ', '\t' }, System.StringSplitOptions.RemoveEmptyEntries);
-                    //UnityEngine.Debug.Log(tokens.Length);
+                    string[] tokens = line.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
 
                     for (int j = 0; j < tokens.Length; j++)
                     {
-                        if (columns.Count <= j)
+                        if (j == 15 || j == 16)
                         {
-                            columns.Add(new List<float>());
+                            while (stringColumns.Count <= j) stringColumns.Add(new List<string>());
+                            stringColumns[j].Add(tokens[j]);
                         }
+                        else
+                        {
+                            while (columns.Count <= j) columns.Add(new List<float>());
+                            if (float.TryParse(tokens[j], out float parsedValue))
+                                columns[j].Add(parsedValue);
+                        }
+                    }
+                }
 
-                        //UnityEngine.Debug.Log(j);
-                        if (float.TryParse(tokens[j], out float parsedValue))
-                        {
-                            columns[j].Add(parsedValue);
-                        }
-                   }
-                }
-                //convert columns to arrays
-                float[][] columnArrays = new float[columns.Count][];
-                for (int j = 0; j < columnArrays.Length; j++)
-                {
-                    columnArrays[j] = columns[j].ToArray();
-                }
+                float[][] columnArrays = columns.Select(c => c.ToArray()).ToArray();
+                dataExtracted[31] = stringColumns[15][0];
+                dataExtracted[32] = stringColumns[16][0];
 
                 if (i == 1)
                 {
@@ -516,9 +513,6 @@ public class VisualizeResults : MonoBehaviour
                     minValue = columnArrays[11].Min();
                     minValue = MathF.Round(minValue);
                     dataExtracted[24] = minValue.ToString();
-
-                    dataExtracted[31] = columnArrays[15].ToString();
-                    dataExtracted[32] = columnArrays[16].ToString();
 
                     File.Delete(path_new);
                 }
@@ -597,30 +591,29 @@ public class VisualizeResults : MonoBehaviour
 
                     File.Delete(path_new);
                 }
-
             }
+
             else
             {
                 filesExist[i - 1] = false;
             }
+
         }
 
-
-        bool hasTrue = false;
-        foreach (bool value in filesExist)
+        bool hastTrue = false;
+        foreach(bool value in filesExist)
         {
             if (value)
             {
-                hasTrue = true;
+                hastTrue = true;
                 break;
             }
         }
 
         string dataSavePath = pathSave;
+        string lineWrite = string.Join("\t", dataExtracted);
 
-        string lineWrite = string.Join("\t",dataExtracted);
-        
-        if (dataExtracted != null && dataExtracted.Length > 0 && hasTrue)
+        if(dataExtracted != null && dataExtracted.Length > 0 && hastTrue)
         {
             if (File.Exists(dataSavePath))
             {
@@ -631,7 +624,7 @@ public class VisualizeResults : MonoBehaviour
             }
             else
             {
-                using (StreamWriter writer = new StreamWriter(dataSavePath, append: true))
+                using (StreamWriter writer = new StreamWriter(dataSavePath, append: false))
                 {
                     string header = "Date" + "\t" + "ThumbMCP Ext" + "\t" + "ThumbMCP Flex" + "\t" +
                         "ThumbIP Ext" + "\t" + "ThumbIP Flex" + "\t" +
@@ -646,7 +639,13 @@ public class VisualizeResults : MonoBehaviour
                 }
             }
         }
-       
+    }
+    private void updateOnlyIfNotEmpty(E2ChartData.Series series)
+    {
+        if (series.dataY.Count > 0)
+        {
+            myChart.chartData.series.Add(series);
+        }
     }
     public void updateGraph()
     {
@@ -681,14 +680,14 @@ public class VisualizeResults : MonoBehaviour
                 if (rightHandFlag)
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageThumbMCP;
-                    myChart.chartData.series.Add(PopulateSeriesRight.series1);
-                    myChart.chartData.series.Add(PopulateSeriesRight.series2);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series1);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series2);
                 }
                 else
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageThumbMCP_left;
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series1);
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series2);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series1);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series2);
                 }
                 myChart.UpdateChart();
             }
@@ -700,14 +699,14 @@ public class VisualizeResults : MonoBehaviour
                 if (rightHandFlag)
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageThumbIP;
-                    myChart.chartData.series.Add(PopulateSeriesRight.series3);
-                    myChart.chartData.series.Add(PopulateSeriesRight.series4);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series3);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series4);
                 }
                 else
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageThumbIP_left;
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series3);
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series4);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series3);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series4);
                 }
                 myChart.UpdateChart();
             }
@@ -720,14 +719,14 @@ public class VisualizeResults : MonoBehaviour
                 if (rightHandFlag)
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageIndexMCP;
-                    myChart.chartData.series.Add(PopulateSeriesRight.series5);
-                    myChart.chartData.series.Add(PopulateSeriesRight.series6);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series5);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series6);
                 }
                 else
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageIndexMCP_left;
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series5);
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series6);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series5);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series6);
                 }
                 myChart.UpdateChart();
             }
@@ -737,14 +736,14 @@ public class VisualizeResults : MonoBehaviour
                 if (rightHandFlag)
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageIndexPIP;
-                    myChart.chartData.series.Add(PopulateSeriesRight.series7);
-                    myChart.chartData.series.Add(PopulateSeriesRight.series8);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series7);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series8);
                 }
                 else
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageIndexPIP_left;
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series7);
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series8);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series7);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series8);
                 }
                 myChart.UpdateChart();
             }
@@ -754,14 +753,14 @@ public class VisualizeResults : MonoBehaviour
                 if (rightHandFlag)
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageIndexDIP;
-                    myChart.chartData.series.Add(PopulateSeriesRight.series9);
-                    myChart.chartData.series.Add(PopulateSeriesRight.series10);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series9);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series10);
                 }
                 else
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageIndexDIP_left;
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series9);
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series10);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series9);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series10);
                 }
                 myChart.UpdateChart();
             }
@@ -775,14 +774,14 @@ public class VisualizeResults : MonoBehaviour
                 if (rightHandFlag)
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageMiddleMCP;
-                    myChart.chartData.series.Add(PopulateSeriesRight.series11);
-                    myChart.chartData.series.Add(PopulateSeriesRight.series12);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series11);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series12);
                 }
                 else
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageMiddleMCP_left;
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series11);
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series12);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series11);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series12);
                 }
                 myChart.UpdateChart();
             }
@@ -792,14 +791,14 @@ public class VisualizeResults : MonoBehaviour
                 if (rightHandFlag)
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageMiddlePIP;
-                    myChart.chartData.series.Add(PopulateSeriesRight.series13);
-                    myChart.chartData.series.Add(PopulateSeriesRight.series14);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series13);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series14);
                 }
                 else
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageMiddlePIP_left;
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series13);
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series14);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series13);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series14);
                 }
                 myChart.UpdateChart();
             }
@@ -809,14 +808,14 @@ public class VisualizeResults : MonoBehaviour
                 if (rightHandFlag)
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageMiddleDIP;
-                    myChart.chartData.series.Add(PopulateSeriesRight.series15);
-                    myChart.chartData.series.Add(PopulateSeriesRight.series16);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series15);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series16);
                 }
                 else
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageMiddleDIP_left;
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series15);
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series16);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series15);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series16);
                 }
                 myChart.UpdateChart();
             }
@@ -829,14 +828,14 @@ public class VisualizeResults : MonoBehaviour
                 if (rightHandFlag)
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageRingMCP;
-                    myChart.chartData.series.Add(PopulateSeriesRight.series17);
-                    myChart.chartData.series.Add(PopulateSeriesRight.series18);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series17);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series18);
                 }
                 else
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageRingMCP_left;
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series17);
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series18);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series17);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series18);
                 }
                 myChart.UpdateChart();
             }
@@ -846,14 +845,14 @@ public class VisualizeResults : MonoBehaviour
                 if (rightHandFlag)
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageRingPIP;
-                    myChart.chartData.series.Add(PopulateSeriesRight.series19);
-                    myChart.chartData.series.Add(PopulateSeriesRight.series20);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series19);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series20);
                 }
                 else
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageRingPIP_left;
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series19);
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series20);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series19);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series20);
                 }
                 myChart.UpdateChart();
             }
@@ -863,14 +862,14 @@ public class VisualizeResults : MonoBehaviour
                 if (rightHandFlag)
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageRingDIP;
-                    myChart.chartData.series.Add(PopulateSeriesRight.series21);
-                    myChart.chartData.series.Add(PopulateSeriesRight.series22);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series21);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series22);
                 }
                 else
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageRingDIP_left;
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series21);
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series22);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series21);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series22);
                 }
                 myChart.UpdateChart();
             }
@@ -883,14 +882,14 @@ public class VisualizeResults : MonoBehaviour
                 if (rightHandFlag)
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imagePinkyMCP;
-                    myChart.chartData.series.Add(PopulateSeriesRight.series23);
-                    myChart.chartData.series.Add(PopulateSeriesRight.series24);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series23);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series24);
                 }
                 else
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imagePinkyMCP_left;
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series23);
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series24);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series23);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series24);
                 }
                 myChart.UpdateChart();
             }
@@ -900,14 +899,14 @@ public class VisualizeResults : MonoBehaviour
                 if (rightHandFlag)
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imagePinkyPIP;
-                    myChart.chartData.series.Add(PopulateSeriesRight.series25);
-                    myChart.chartData.series.Add(PopulateSeriesRight.series26);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series25);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series26);
                 }
                 else
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imagePinkyPIP_left ;
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series25);
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series26);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series25);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series26);
                 }
                 myChart.UpdateChart();
             }
@@ -917,14 +916,14 @@ public class VisualizeResults : MonoBehaviour
                 if (rightHandFlag)
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imagePinkyDIP;
-                    myChart.chartData.series.Add(PopulateSeriesRight.series27);
-                    myChart.chartData.series.Add(PopulateSeriesRight.series28);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series27);
+                    updateOnlyIfNotEmpty(PopulateSeriesRight.series28);
                 }
                 else
                 {
                     HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imagePinkyDIP_left;
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series27);
-                    myChart.chartData.series.Add(PopulateSeriesLeft.series28);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series27);
+                    updateOnlyIfNotEmpty(PopulateSeriesLeft.series28);
                 }
                 myChart.UpdateChart();
             }  
@@ -935,14 +934,14 @@ public class VisualizeResults : MonoBehaviour
             if (rightHandFlag)
             {
                 HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageWrist;
-                myChart.chartData.series.Add(PopulateSeriesRight.series29);
-                myChart.chartData.series.Add(PopulateSeriesRight.series30);
+                updateOnlyIfNotEmpty(PopulateSeriesRight.series29);
+                updateOnlyIfNotEmpty(PopulateSeriesRight.series30);
             }
             else
             {
                 HandMapImage.GetComponent<UnityEngine.UI.Image>().sprite = imageWrist_left;
-                myChart.chartData.series.Add(PopulateSeriesLeft.series29);
-                myChart.chartData.series.Add(PopulateSeriesLeft.series30);
+                updateOnlyIfNotEmpty(PopulateSeriesLeft.series29);
+                updateOnlyIfNotEmpty(PopulateSeriesLeft.series30);
             }
             myChart.UpdateChart();
         }
@@ -974,11 +973,78 @@ public class VisualizeResults : MonoBehaviour
                     DateTo = PopulateSeriesLeft.dates[0];
                 }
             }
+            var allSeries = rightHandFlag
+            ? new[] { PopulateSeriesRight.series1, PopulateSeriesRight.series2,
+            PopulateSeriesRight.series3, PopulateSeriesRight.series4,
+            PopulateSeriesRight.series5, PopulateSeriesRight.series6,
+            PopulateSeriesRight.series7, PopulateSeriesRight.series8,
+            PopulateSeriesRight.series9, PopulateSeriesRight.series10,
+            PopulateSeriesRight.series11, PopulateSeriesRight.series12,
+            PopulateSeriesRight.series13, PopulateSeriesRight.series14,
+            PopulateSeriesRight.series15, PopulateSeriesRight.series16,
+            PopulateSeriesRight.series17, PopulateSeriesRight.series18,
+            PopulateSeriesRight.series19, PopulateSeriesRight.series20,
+            PopulateSeriesRight.series21, PopulateSeriesRight.series22,
+            PopulateSeriesRight.series23, PopulateSeriesRight.series24,
+            PopulateSeriesRight.series25, PopulateSeriesRight.series26,
+            PopulateSeriesRight.series27, PopulateSeriesRight.series28,
+            PopulateSeriesRight.series29, PopulateSeriesRight.series30}
+            : new[] { PopulateSeriesLeft.series1, PopulateSeriesLeft.series2,
+            PopulateSeriesLeft.series3, PopulateSeriesLeft.series4,
+            PopulateSeriesLeft.series5, PopulateSeriesLeft.series6,
+            PopulateSeriesLeft.series7, PopulateSeriesLeft.series8,
+            PopulateSeriesLeft.series9, PopulateSeriesLeft.series10,
+            PopulateSeriesLeft.series11, PopulateSeriesLeft.series12,
+            PopulateSeriesLeft.series13, PopulateSeriesLeft.series14,
+            PopulateSeriesLeft.series15, PopulateSeriesLeft.series16,
+            PopulateSeriesLeft.series17, PopulateSeriesLeft.series18,
+            PopulateSeriesLeft.series19, PopulateSeriesLeft.series20,
+            PopulateSeriesLeft.series21, PopulateSeriesLeft.series22,
+            PopulateSeriesLeft.series23, PopulateSeriesLeft.series24,
+            PopulateSeriesLeft.series25, PopulateSeriesLeft.series26,
+            PopulateSeriesLeft.series27, PopulateSeriesLeft.series28,
+            PopulateSeriesLeft.series29, PopulateSeriesLeft.series30};
+
+            // Backup original data
+            var backupDataY = new List<List<float>>();
+            var backupDates = new List<List<string>>();
+
+            foreach (var series in allSeries)
+            {
+                backupDataY.Add(new List<float>(series.dataY));
+                backupDates.Add(new List<string>(series.dateTimeString));
+
+                // Filter series to the date range
+                List<float> filteredY = new List<float>();
+                List<string> filteredDates = new List<string>();
+
+                for (int i = 0; i < series.dataY.Count; i++)
+                {
+                    if (string.Compare(series.dateTimeString[i], DateFrom) >= 0 &&
+                        string.Compare(series.dateTimeString[i], DateTo) <= 0)
+                    {
+                        filteredY.Add(series.dataY[i]);
+                        filteredDates.Add(series.dateTimeString[i]);
+                    }
+                }
+
+                series.dataY = filteredY;
+                series.dateTimeString = filteredDates;
+            }
+
             myChart.chartOptions.xAxis.autoAxisRange = false;
             myChart.chartOptions.xAxis.rangeDateTimeStringFormat = "yyyy-MM-dd";
             myChart.chartOptions.xAxis.minDateTimeString = DateFrom;
             myChart.chartOptions.xAxis.maxDateTimeString = DateTo;
             myChart.UpdateChart();
+
+            // Restore original data so you can filter again later
+            for (int i = 0; i < allSeries.Length; i++)
+            {
+                allSeries[i].dataY = backupDataY[i];
+                allSeries[i].dateTimeString = backupDates[i];
+            }
+
             dateFromChangedFlag = false;
             dateToChangedFlag = false;
        
@@ -1017,6 +1083,7 @@ public class VisualizeResults : MonoBehaviour
         PIPButton.GetComponentInChildren<TextMeshProUGUI>().text = "IP";
         MCPButton.GetComponentInChildren<TextMeshProUGUI>().text = "MCP";
     }
+
 
     private void IndexButtonOnClick()
     {
@@ -1359,14 +1426,14 @@ public class VisualizeResults : MonoBehaviour
             Functions.SaveCSV(csvFilePath_right, dataFilePath_right);
             Functions.SaveCSV(csvFilePath_left, dataFilePath_left);
 
-            StartCoroutine(WaitAndCheckFile(csvFilePath_left));
+            StartCoroutine(WaitAndCheckFile(csvFilePath_right));
         }
         //pdf of the plot
         else if (GraphToggle.isOn)
         {
             CoroutineRunner.Instance.StartCoroutine(ImportImages.CaptureAllImagesCoroutine());
 
-            string pdfFile = Directory.GetCurrentDirectory() + "/Assets/" + LogIn.PatientID + "_" + LogIn.TodaysDate + "_data.pdf";
+            string pdfFile = Application.dataPath + "/" + LogIn.PatientID + "_" + LogIn.TodaysDate + "_data.pdf";
             StartCoroutine(WaitAndCheckFile(pdfFile));
         }
     }

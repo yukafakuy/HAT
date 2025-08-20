@@ -21,9 +21,11 @@ public class ImportImages : MonoBehaviour
     {
         chartCamera = GetComponent<Camera>();
 
-        if (!AssetDatabase.IsValidFolder("Assets/Screenshots"))
+        string newFolderGUID = Path.Combine(Application.persistentDataPath, "Screenshots");
+
+        if (!Directory.Exists(newFolderGUID))
         {
-            string newFolderGUID = AssetDatabase.CreateFolder("Assets", "Screenshots");
+            Directory.CreateDirectory(newFolderGUID);
         }
     }
 

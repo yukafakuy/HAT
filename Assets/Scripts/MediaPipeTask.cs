@@ -56,7 +56,8 @@ public class MediaPipeTask : MonoBehaviour
     public Button SkipButton, ProceedButton;
 
     //task list
-    public static bool task1Flag, task2Flag, task3Flag, task4Flag, task5Flag, task6Flag, task7Flag = false;
+    private bool task1Flag, task2Flag, task3Flag, task4Flag, task5Flag, task6Flag, task7Flag = false;
+    public static bool task3Mod = false;
     private string taskText;
     private string[] taskNames = { "Finger Extension", "MCP Flexion", "PIP/DIP Extension", "Thumb Out", "Thumb In", "Wrist Flexion/Extension" };
     private string lineText;
@@ -79,12 +80,6 @@ public class MediaPipeTask : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //camera stuff
-        //Matrix4x4 mat = Camera2.projectionMatrix;
-        ////mat.m00 *= -1;
-        //mat *= Matrix4x4.Scale(new Vector3(-1, 1, 1));
-        //Camera2.projectionMatrix = mat;
-
         if (SetUp.rightHandFlag)
         {
             handIndication.text = "Right Hand";
@@ -109,8 +104,6 @@ public class MediaPipeTask : MonoBehaviour
         SkipButton.onClick.AddListener(SkipButtonOnClick);
         ProceedButton.onClick.AddListener(ProceedButtonOnClick);
 
-        instruction.text = "Place the palm facing the camera.";
-
         stopWatch = new Stopwatch();
         sliderText.text = "";
 
@@ -124,6 +117,7 @@ public class MediaPipeTask : MonoBehaviour
             task1Flag = true;
             taskText = "<b>Finger Extension</b>";
             title.text = "Finger Extension";
+            instruction.text = "Place the palm facing the camera.";
             if (SetUp.rightHandFlag)
             {
                 InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1;
@@ -144,6 +138,7 @@ public class MediaPipeTask : MonoBehaviour
             task2Flag = true;
             taskText = "<b>MCP Flexion</b>";
             title.text = "MCP Flexion";
+            instruction.text = "Place the pinky side of hand towards the camera.";
             if (SetUp.rightHandFlag)
             {
                 InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage2;
@@ -161,8 +156,10 @@ public class MediaPipeTask : MonoBehaviour
         else if (scene == 10)
         {
             task3Flag = true;
+            task3Mod = true;
             taskText = "<b>PIP/DIP Flexion</b>";
             title.text = "PIP/DIP Flexion";
+            instruction.text = "Place the palm facing the camera.";
             if (SetUp.rightHandFlag)
             {
                 InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1;
@@ -182,6 +179,7 @@ public class MediaPipeTask : MonoBehaviour
             task4Flag = true;
             taskText = "<b>Thumb Out</b>";
             title.text = "Thumb Out";
+            instruction.text = "Place the palm facing the camera.";
             if (SetUp.rightHandFlag)
             {
                 InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1;
@@ -201,6 +199,7 @@ public class MediaPipeTask : MonoBehaviour
             task5Flag = true;
             taskText = "<b>Thumb In</b>";
             title.text = "Thumb In";
+            instruction.text = "Place the palm facing the camera.";
             if (SetUp.rightHandFlag)
             {
                 InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage1;
@@ -220,6 +219,7 @@ public class MediaPipeTask : MonoBehaviour
             task6Flag = true;
             taskText = "<b>Wrist Flexion/Extension</b>";
             title.text = "Wrist Flexion/Extension";
+            instruction.text = "Place the palm facing the camera.";
             if (SetUp.rightHandFlag)
             {
                 InstructionalImage.GetComponent<UnityEngine.UI.Image>().sprite = OrientationImage2;
@@ -325,11 +325,13 @@ public class MediaPipeTask : MonoBehaviour
             {
                 if (!SetUp.webcamFlag)
                 {
+                    task3Mod = false;
                     SceneManager.LoadScene(i + 2);
                     return;
                 }
                 else
                 {
+                    task3Mod = false;
                     SceneManager.LoadScene(i + 8);
                     return;
                 }
@@ -539,7 +541,6 @@ public class MediaPipeTask : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if (audioNumber == 0)
         {
             audioSource.Play(0);

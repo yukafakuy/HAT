@@ -25,7 +25,7 @@ namespace Mediapipe.Unity.Sample.HandLandmarkDetection
     public float MinHandDetectionConfidence { get; set; } = 0.8f;
     public float MinHandPresenceConfidence { get; set; } = 0.8f;
     public float MinTrackingConfidence { get; set; } = 0.95f;
-    public string ModelPath => "hand_landmarker.bytes";
+    public string ModelPath => UnityEngine.Application.streamingAssetsPath + "/hand_landmarker.bytes";
 
     public HandLandmarkerOptions GetHandLandmarkerOptions(HandLandmarkerOptions.ResultCallback resultCallback = null)
     {

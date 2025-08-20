@@ -56,13 +56,27 @@ public class windowGraph : MonoBehaviour
         GameObject lastCircleGameObject = null;
         for (int i = 0; i < valueList.Count; i++)
         {
+            if (float.IsNaN(valueList[i]))
+            {
+                // If you want to break the line at NaNs, uncomment this:
+                // lastCircleGameObject = null;
+
+                // If you want to connect across NaNs, just skip circle creation
+                continue;
+            }
+
             float xPosition = i * xSize;
             float yPosition = (valueList[i] / yMaximum) * graphHeight;
             GameObject circleGameObject = CreateCircle(new Vector2(xPosition, yPosition));
-            if (lastCircleGameObject!= null )
+
+            if (lastCircleGameObject != null)
             {
-                CreateDotConnection(lastCircleGameObject.GetComponent<RectTransform>().anchoredPosition, circleGameObject.GetComponent<RectTransform>().anchoredPosition);
+                CreateDotConnection(
+                    lastCircleGameObject.GetComponent<RectTransform>().anchoredPosition,
+                    circleGameObject.GetComponent<RectTransform>().anchoredPosition
+                );
             }
+
             lastCircleGameObject = circleGameObject;
 
             RectTransform labelX = Instantiate(labelTemplateX);

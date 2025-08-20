@@ -249,16 +249,30 @@ namespace Mediapipe.Unity
 
     private IEnumerator WaitForWebCamTexture()
     {
-      const int timeoutFrame = 2000;
+      const int timeoutFrame = 5000;
       var count = 0;
       Debug.Log("Waiting for WebCamTexture to start");
-      yield return new WaitUntil(() => count++ > timeoutFrame || webCamTexture.width > 16);
+        yield return new WaitUntil(() => {
+            count++;
+            bool isReady = webCamTexture.width > 16;
 
-      if (webCamTexture.width <= 16)
-      {
-        throw new TimeoutException("Failed to start WebCam");
-      }
+            if (count % 100 == 0) // Log every ~1.67 seconds at 60fps
+            {
+                Debug.Log($"WebCam status: width={webCamTexture.width}, height={webCamTexture.height}, isPlaying={webCamTexture.isPlaying}");
+            }
+
+            return count > timeoutFrame || isReady;
+        });
+
+        if (webCamTexture.width <= 16)
+        {
+            Debug.LogError($"Failed to start WebCam after {timeoutFrame} frames. Final dimensions: {webCamTexture.width}x{webCamTexture.height}");
+            throw new TimeoutException("Failed to start WebCam");
+        }
+
+        Debug.Log($"WebCam started successfully: {webCamTexture.width}x{webCamTexture.height}");
     }
+  
 
     private class ResolutionStructComparer : IComparer<ResolutionStruct>
     {
