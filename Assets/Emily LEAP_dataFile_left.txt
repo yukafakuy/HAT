@@ -1,4 +1,0 @@
-Date	ThumbMCP Extend	ThumbMCP Flex	ThumbIP Extend	ThumbIP Flex	IndexMCP Ext	IndexMCP Flex	IndexPIP Ext	IndexPIP Flex	IndexDIP Ext	IndexDIP Flex	MiddleMCP Ext	MiddleMCP Flex	MiddlePIP Ext	MiddlePIP Flex	MiddleDIP Ext	MiddleDIP Flex	RingMCP Ext	RingMCP Flex	RingPIP Ext	RingPIP Flex	RingDIP Ext	RingDIP Flex	LittleMCP Ext	LittleMCP Flex	LittlePIP Ext	LittlePIP Flex	LittleDIP Ext	LittleDIP Flex	Wrist Ext	Wrist Flex	Pre Therapy Flag	Webcam Flag
-2025-05-07	-19	-35	-36	-49	-22	-70	-23	-73	-16	-41	-22	-84	-27	-76	-20	-42	-22	-83	-25	-80	-10	-40	14	-83	-16	-71	-12	-51	56	-43	True	False
-2025-05-09	-21	-24	-30	-36	-5	-71	-16	-86	-12	-40	-17	-84	-23	-82	-19	-46	-19	-83	-15	-85	-7	-47	25	-82	-15	-82	-12	-53	59	-64	True	False
-2025-05-09	-16	-32	-33	-43	-16	-74	-18	-79	-13	-37	-11	-87	-19	-78	-15	-44	-17	-83	-22	-79	-11	-40	15	-81	-18	-76	-15	-49	51	-53	True	False

@@ -1,7 +1,0 @@
-Date	ThumbMCP Ext	ThumbMCP Flex	ThumbIP Ext	ThumbIP Flex	IndexMCP Ext	IndexMCP Flex	IndexPIP Ext	IndexPIP Flex	IndexDIP Ext	IndexDIP Flex	MiddleMCP Ext	MiddleMCP Flex	MiddlePIP Ext	MiddlePIP Flex	MiddleDIP Ext	MiddleDIP Flex	RingMCP Ext	RingMCP Flex	RingPIP Ext	RingPIP Flex	RingDIP Ext	RingDIP Flex	LittleMCP Ext	LittleMCP Flex	LittlePIP Ext	LittlePIP Flex	LittleDIP Ext	LittleDIP Flex	Wrist Ext	Wrist Flex	Webcam Flag	Provider
-2025-06-01	31	-39	45	-63	-2	-58	2	-129	-3	21	2	-66	2	142	3	15	5	-69	3	0	4	0	5	-78	6	0	5	0	null	null	True	Sasha
-2025-06-10	26	-35	25	-88	0	-71	0	127	0	18	0	-75	3	141	2	15	0	-71	5	150	4	14	0	-74	7	129	7	23	null	null	True	Sasha
-2025-06-20	18	-37	32	-83	-5	-67	-3	117	-3	27	2	-74	-2	124	2	27	3	-76	1	124	4	30	3	-87	5	84	5	30	null	null	True	Sasha
-2025-07-01	4	-30	-3	-32	10	-67	-3	-82	-3	-58	17	-89	-3	-89	-3	-62	17	-94	-5	-86	-5	-60	9	-90	-6	-69	-6	-48	64	-63	False	Sasha
-2025-07-10	6	-33	-3	-35	15	-68	-2	-77	-2	-54	20	-90	-1	-83	-1	-58	23	-91	-4	-79	-4	-55	13	-85	-4	-71	-4	-50	64	-59	False	Sasha
-2025-07-20	12	-25	1	-34	9	-62	-2	-74	-2	-52	14	-80	-2	-83	-2	-58	16	-87	-5	-80	-5	-56	16	-81	-7	-71	-7	-50	59	-51	False	Sasha
