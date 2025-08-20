@@ -147,6 +147,8 @@ Assets\Scripts\
 ## Notes
 - H.A.T. will have ongoing updates to improve accuracy for webcam-based tracking via MediaPipe. 
 - Current interface tested and validated with clinicians and co-designers (accuracy results are comming soon)
+- If you end up abruptly closing the program in the middle one of the data collection tasks, make sure you go into the appropriate folder and delete the file associated with it (it will be empty). Otherwise, when you get to the Results page, it will throw an error.
+- If using Leap, the device must be connected and running (appropraite tracking service on and running as well) *prior* to starting the H.A.T. interface.
 
 ---
 
